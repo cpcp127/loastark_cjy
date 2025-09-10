@@ -1,4 +1,6 @@
 import 'package:cjylostark/custom_widget/custom_loading_widget.dart';
+import 'package:cjylostark/custom_widget/grade_container.dart';
+import 'package:cjylostark/custom_widget/quality_progressbar.dart';
 import 'package:cjylostark/custom_widget/search_textfield.dart';
 import 'package:cjylostark/feature/armories/domain/character_equipment.dart';
 import 'package:cjylostark/feature/armories/domain/character_profile.dart';
@@ -34,7 +36,7 @@ class _HomeViewState extends ConsumerState<ProfileView> {
               children: [Row(), CustomLoadingWidget()],
             ),
           )
-        : state.profile == null
+        : profile == null
         ? Container(
             color: Colors.white,
             child: SafeArea(
@@ -76,7 +78,7 @@ class _HomeViewState extends ConsumerState<ProfileView> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.pop(context); // 뒤로가기
+              controller.tabBackButton();
             },
           ),
         ),
@@ -135,120 +137,347 @@ class _HomeViewState extends ConsumerState<ProfileView> {
                   Tab(text: '각인'),
                 ],
               ),
-              state.tabViewLoading
-                  ? CustomLoadingWidget()
-                  : state.tabBarIndex == 0
-                  ? Column(
-                      children: [
-                        //장비
-                        Text('장비'),
-                        for (int i = 0; i < 6; i++)
-                          buildEquipment(equipment, i, controller),
-                        //악세사리
-                        Text('악세사리'),
-                        for (int i = 6; i < 11; i++)
-                          buildAccessories(equipment, i, controller),
-                        //팔찌
-                        Row(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text('장비'),
+                  //무기
+                  state.weapon == null
+                      ? Container()
+                      : Row(
                           children: [
-                            Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.black),
-                                image: DecorationImage(
-                                  image: NetworkImage(equipment![12].icon),
-                                  fit: BoxFit.cover,
-                                ),
+                            GestureDetector(
+                              onTap: () {
+                                print(state.weapon);
+                              },
+                              child: Stack(
+                                alignment: Alignment.bottomCenter,
+                                children: [
+                                  GradeContainer(
+                                    icon: state.weapon!.icon,
+                                    grade: state.weapon!.grade,
+                                  ),
+                                  //품질 프로그레스바
+                                  QualityProgressbar(
+                                    qualityValue: state
+                                        .weapon!
+                                        .tooltip!
+                                        .element001!
+                                        .value['qualityValue'],
+                                    progressColor: controller.getQualityColor(
+                                      state
+                                          .weapon!
+                                          .tooltip!
+                                          .element001!
+                                          .value['qualityValue'],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Text(extractEnhanceLevel(equipment[12].name)),
-                            SizedBox(width: 4),
-                            Text(equipment[12].grade),
-                            SizedBox(width: 4),
-                            equipment[12].tooltip == null
-                                ? Container()
-                                : Expanded(
-                                    child: TooltipText(
-                                      equipment[12]
-                                          .tooltip!
-                                          .element005!
-                                          .value['Element_001'],
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(state.weapon!.grade),
+                                    Text(
+                                      extractEnhanceLevel(state.weapon!.name),
                                     ),
-                                  ),
-                          ],
-                        ),
-                        //어빌리티 스톤
-                        Container(
-                          width: double.infinity,
-                          child: Row(
-                            children: [
-                              Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Container(
-                                    width: 60,
-                                    height: 60,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: Colors.black),
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                          equipment![11].icon,
+                                  ],
+                                ),
+                                //상급재련
+                                state.weapon!.tooltip!.element005!.value
+                                        .toString()
+                                        .contains('상급 재련')
+                                    ? Text(
+                                        '상급 재련 ${controller.getAdvancedRefiningLevel(state.weapon!.tooltip!.element005!.value as String).toString()}단계',
+                                      )
+                                    : Container(),
+                                //초월
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 14,
+                                      height: 14,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                            'assets/images/ico_tooltip_transcendence.png',
+                                          ),
+                                          fit: BoxFit.cover,
                                         ),
-                                        fit: BoxFit.cover,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Text(extractEnhanceLevel(equipment[11].name)),
-                                  SizedBox(width: 4),
-                                  Text(equipment[11].grade),
-                                  SizedBox(width: 4),
-                                  equipment[11].tooltip == null
-                                      ? Container()
-                                      : Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            for (int i = 0; i < 3; i++)
-                                              TooltipText(
-                                                equipment[11]
-                                                    .tooltip!
-                                                    .element007!
-                                                    .value['Element_000']['contentStr']['Element_00$i']['contentStr']
-                                                    .toString()
-                                                    .replaceAll("[", "")
-                                                    .replaceAll("]", "")
-                                                    .replaceAll(
-                                                      RegExp(r"<br>|<BR>"),
-                                                      "",
-                                                    ),
-                                              ),
-                                          ],
-                                        ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                    state.weapon!.tooltip!.element009!.value ==
+                                            null
+                                        ? Container()
+                                        : Text(
+                                            transcendence(
+                                                  state
+                                                      .weapon!
+                                                      .tooltip!
+                                                      .element009!
+                                                      .value['Element_000']['topStr'],
+                                                ) ??
+                                                "",
+                                          ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ],
-                    )
-                  : Container(),
-              GestureDetector(
-                onTap: () {
-                  print(equipment);
-                },
-                child: Container(width: 100, height: 100, color: Colors.red),
+                  state.helmet == null
+                      ? Container()
+                      : buildEquipmentItem(state, controller, state.helmet!),
+                  state.shoulder == null
+                      ? Container()
+                      : buildEquipmentItem(state, controller, state.shoulder!),
+                  state.armor == null
+                      ? Container()
+                      : buildEquipmentItem(state, controller, state.armor!),
+                  state.pants == null
+                      ? Container()
+                      : buildEquipmentItem(state, controller, state.pants!),
+                  state.glove == null
+                      ? Container()
+                      : buildEquipmentItem(state, controller, state.glove!),
+
+                ],
               ),
+              // state.tabViewLoading
+              //     ? CustomLoadingWidget()
+              //     : state.tabBarIndex == 0
+              //     ? Column(
+              //         children: [
+              //           //장비
+              //           Text('장비'),
+              //           for (int i = 0; i < 6; i++)
+              //             buildEquipment(equipment, i, controller),
+              //           //악세사리
+              //           Text('악세사리'),
+              //           for (int i = 6; i < 11; i++)
+              //             buildAccessories(equipment, i, controller),
+              //           //팔찌
+              //           Row(
+              //             children: [
+              //               Container(
+              //                 width: 60,
+              //                 height: 60,
+              //                 decoration: BoxDecoration(
+              //                   borderRadius: BorderRadius.circular(8),
+              //                   border: Border.all(color: Colors.black),
+              //                   image: DecorationImage(
+              //                     image: NetworkImage(equipment![12].icon),
+              //                     fit: BoxFit.cover,
+              //                   ),
+              //                 ),
+              //               ),
+              //               Text(extractEnhanceLevel(equipment[12].name)),
+              //               SizedBox(width: 4),
+              //               Text(equipment[12].grade),
+              //               SizedBox(width: 4),
+              //               equipment[12].tooltip == null
+              //                   ? Container()
+              //                   : Expanded(
+              //                       child: TooltipText(
+              //                         equipment[12]
+              //                             .tooltip!
+              //                             .element005!
+              //                             .value['Element_001'],
+              //                       ),
+              //                     ),
+              //             ],
+              //           ),
+              //           //어빌리티 스톤
+              //           Container(
+              //             width: double.infinity,
+              //             child: Row(
+              //               children: [
+              //                 Stack(
+              //                   alignment: Alignment.center,
+              //                   children: [
+              //                     Container(
+              //                       width: 60,
+              //                       height: 60,
+              //                       decoration: BoxDecoration(
+              //                         borderRadius: BorderRadius.circular(8),
+              //                         border: Border.all(color: Colors.black),
+              //                         image: DecorationImage(
+              //                           image: NetworkImage(
+              //                             equipment![11].icon,
+              //                           ),
+              //                           fit: BoxFit.cover,
+              //                         ),
+              //                       ),
+              //                     ),
+              //                   ],
+              //                 ),
+              //                 Row(
+              //                   children: [
+              //                     Text(extractEnhanceLevel(equipment[11].name)),
+              //                     SizedBox(width: 4),
+              //                     Text(equipment[11].grade),
+              //                     SizedBox(width: 4),
+              //                     equipment[11].tooltip == null
+              //                         ? Container()
+              //                         : Column(
+              //                             crossAxisAlignment:
+              //                                 CrossAxisAlignment.start,
+              //                             children: [
+              //                               for (int i = 0; i < 3; i++)
+              //                                 TooltipText(
+              //                                   equipment[11]
+              //                                       .tooltip!
+              //                                       .element007!
+              //                                       .value['Element_000']['contentStr']['Element_00$i']['contentStr']
+              //                                       .toString()
+              //                                       .replaceAll("[", "")
+              //                                       .replaceAll("]", "")
+              //                                       .replaceAll(
+              //                                         RegExp(r"<br>|<BR>"),
+              //                                         "",
+              //                                       ),
+              //                                 ),
+              //                             ],
+              //                           ),
+              //                   ],
+              //                 ),
+              //               ],
+              //             ),
+              //           ),
+              //         ],
+              //       )
+              //     : Container(),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Row buildEquipmentItem(
+    ProfileState state,
+    ProfileController controller,
+    CharacterEquipment item,
+  ) {
+    return Row(
+      children: [
+        Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            GradeContainer(icon: item.icon, grade: item.grade),
+            //품질 프로그레스바
+            QualityProgressbar(
+              qualityValue: item.tooltip!.element001!.value['qualityValue'],
+              progressColor: controller.getQualityColor(
+                item.tooltip!.element001!.value['qualityValue'],
+              ),
+            ),
+          ],
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(item.grade),
+                Text(extractEnhanceLevel(item.name)),
+              ],
+            ),
+            //상급재련
+            item.tooltip!.element005!.value.toString().contains('상급 재련')
+                ? Text(
+                    '상급 재련 ${controller.getAdvancedRefiningLevel(item.tooltip!.element005!.value as String).toString()}단계',
+                  )
+                : Container(),
+            //초월
+            Row(
+              children: [
+                Container(
+                  width: 14,
+                  height: 14,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(
+                        'assets/images/ico_tooltip_transcendence.png',
+                      ),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                item.tooltip!.element010!.value == null ||
+                        item.tooltip!.element005!.value.toString().contains(
+                              '초월',
+                            ) ==
+                            false
+                    ? Container()
+                    : Text(
+                        transcendence(
+                              item
+                                  .tooltip!
+                                  .element010!
+                                  .value['Element_000']['topStr'],
+                            ) ??
+                            "",
+                      ),
+              ],
+            ),
+          ],
+        ),
+        //엘릭서
+        item.tooltip!.element011!.value.isEmpty ||
+                item.tooltip!.element011!.value.toString().contains('엘릭서') ==
+                    false
+            ? Container()
+            : Column(
+                children: [
+                  Builder(
+                    builder: (context) {
+                      final elixirElements =
+                          item.tooltip!.element011!.value
+                              as Map<String, dynamic>;
+                      final elixirItemElements =
+                          item
+                                  .tooltip!
+                                  .element011!
+                                  .value['Element_000']['contentStr']
+                              as Map<String, dynamic>;
+                      if (elixirElements.isEmpty) {
+                        return Container();
+                      } else {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            elixirItemElements.isNotEmpty
+                                ? TooltipText(
+                                    elixir(
+                                      item
+                                          .tooltip!
+                                          .element011!
+                                          .value['Element_000']['contentStr']['Element_000']['contentStr'],
+                                    ),
+                                  )
+                                : Container(),
+                            elixirItemElements.length >= 2
+                                ? TooltipText(
+                                    elixir(
+                                      item
+                                          .tooltip!
+                                          .element011!
+                                          .value['Element_000']['contentStr']['Element_001']['contentStr'],
+                                    ),
+                                  )
+                                : Container(),
+                          ],
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+      ],
     );
   }
 
@@ -363,89 +592,177 @@ class _HomeViewState extends ConsumerState<ProfileView> {
   ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: GestureDetector(
-        onTap: (){
-          print(equipment[i].tooltip!.element010!.value['Element_000']['topStr']);
-        },
-        child: Container(
-          width: double.infinity,
-          child: Row(
-            children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.black),
-                      image: DecorationImage(
-                        image: NetworkImage(equipment![i].icon),
-                        fit: BoxFit.cover,
-                      ),
+      child: Container(
+        width: double.infinity,
+        child: Row(
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.black),
+                    image: DecorationImage(
+                      image: NetworkImage(equipment![i].icon),
+                      fit: BoxFit.cover,
                     ),
                   ),
+                ),
 
-                  Positioned(
-                    bottom: 0,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(
-                          width: 55,
-                          height: 10,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: LinearProgressIndicator(
-                              value:
-                                  equipment[i]
-                                      .tooltip!
-                                      .element001!
-                                      .value['qualityValue'] /
-                                  100,
-                              minHeight: 10,
-                              backgroundColor: Colors.black26,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                controller.getQualityColor(
-                                  equipment[i]
-                                      .tooltip!
-                                      .element001!
-                                      .value['qualityValue'],
+                Positioned(
+                  bottom: 0,
+                  child: Column(
+                    children: [
+                      //초월
+                      Container(
+                        color: Colors.black,
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 14,
+                              height: 14,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                    'assets/images/ico_tooltip_transcendence.png',
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            i == 0
+                                ? Text(
+                                    transcendence(
+                                          equipment[i]
+                                              .tooltip!
+                                              .element009!
+                                              .value['Element_000']['topStr'],
+                                        ) ??
+                                        "",
+                                    style: TextStyle(color: Colors.white),
+                                  )
+                                : Text(
+                                    transcendence(
+                                          equipment[i]
+                                              .tooltip!
+                                              .element010!
+                                              .value['Element_000']['topStr'],
+                                        ) ??
+                                        "",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                          ],
+                        ),
+                      ),
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          SizedBox(
+                            width: 55,
+                            height: 10,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: LinearProgressIndicator(
+                                value:
+                                    equipment[i]
+                                        .tooltip!
+                                        .element001!
+                                        .value['qualityValue'] /
+                                    100,
+                                minHeight: 10,
+                                backgroundColor: Colors.black26,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  controller.getQualityColor(
+                                    equipment[i]
+                                        .tooltip!
+                                        .element001!
+                                        .value['qualityValue'],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        Text(
-                          '${equipment[i].tooltip!.element001!.value['qualityValue']}',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 10,
+                          Text(
+                            '${equipment[i].tooltip!.element001!.value['qualityValue']}',
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
+                            ),
                           ),
-                        ),
-
-
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(extractEnhanceLevel(equipment[i].name)),
-                  SizedBox(width: 4),
-                  Text(equipment[i].grade),
-                  Text(
-                    ' 상급 재련 ${controller.getAdvancedRefiningLevel(equipment[i].tooltip!.element005!.value as String).toString()}단계',
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Text(extractEnhanceLevel(equipment[i].name)),
+                SizedBox(width: 4),
+                Text(equipment[i].grade),
+                Text(
+                  ' 상급 재련 ${controller.getAdvancedRefiningLevel(equipment[i].tooltip!.element005!.value as String).toString()}단계',
+                ),
+              ],
+            ),
+            //엘릭서
+            equipment[i].tooltip!.element011!.value.isEmpty
+                ? Container()
+                : Column(
+                    children: [
+                      i == 0
+                          ? Container()
+                          : Builder(
+                              builder: (context) {
+                                final elixirElements =
+                                    equipment[i].tooltip!.element011!.value
+                                        as Map<String, dynamic>;
+                                final elixirItemElements =
+                                    equipment[i]
+                                            .tooltip!
+                                            .element011!
+                                            .value['Element_000']['contentStr']
+                                        as Map<String, dynamic>;
+                                if (elixirElements.isEmpty) {
+                                  return Container();
+                                } else {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      elixirItemElements.isNotEmpty
+                                          ? TooltipText(
+                                              elixir(
+                                                equipment[i]
+                                                    .tooltip!
+                                                    .element011!
+                                                    .value['Element_000']['contentStr']['Element_000']['contentStr'],
+                                              ),
+                                            )
+                                          : Container(),
+                                      elixirItemElements.length >= 2
+                                          ? TooltipText(
+                                              elixir(
+                                                equipment[i]
+                                                    .tooltip!
+                                                    .element011!
+                                                    .value['Element_000']['contentStr']['Element_001']['contentStr'],
+                                              ),
+                                            )
+                                          : Container(),
+                                    ],
+                                  );
+                                }
+                              },
+                            ),
+                    ],
                   ),
-                  TooltipText(equipment[i].tooltip!.element010!.value['Element_000']['topStr'])
-                ],
-              ),
-            ],
-          ),
+          ],
         ),
       ),
     );
@@ -461,6 +778,37 @@ class _HomeViewState extends ConsumerState<ProfileView> {
 String extractEnhanceLevel(String name) {
   final match = RegExp(r'^\+\d+').firstMatch(name);
   return match != null ? match.group(0)! : '';
+}
+
+//엘릭서
+String elixir(String rawHtml) {
+  // 1. HTML 태그 제거
+  String text = rawHtml.replaceAll(RegExp(r"<[^>]*>"), "");
+
+  // 2. [공용], [투구] 같은 괄호 제거
+  text = text.replaceAll(RegExp(r"\[.*?\]"), "").trim();
+
+  // 3. 줄바꿈, 공백 정리
+  text = text.replaceAll("\n", " ").replaceAll("\r", " ").trim();
+
+  // 4. 정규식으로 "이름 + Lv.x" 부분만 추출
+  final match = RegExp(r"([가-힣A-Za-z ()]+)\s*Lv\.\d+").firstMatch(text);
+
+  if (match != null) {
+    return match.group(0) ?? ""; // "민첩 Lv.5"
+  }
+
+  return "";
+}
+
+//초월 추출
+String? transcendence(String html) {
+  final regex = RegExp(r'(\d+)$'); // 문자열 끝에 있는 숫자
+  final match = regex.firstMatch(html);
+
+  String? result = match?.group(1); // "21"
+
+  return result;
 }
 
 class TooltipText extends StatelessWidget {
