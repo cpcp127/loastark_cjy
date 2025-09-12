@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:cjylostark/feature/armories/data/armories_repository.dart';
+import 'package:cjylostark/feature/armories/domain/character_equipment.dart';
 import 'package:cjylostark/feature/armories/presentation/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,23 +47,31 @@ class ProfileController extends StateNotifier<ProfileState> {
           for (int i = 0; i < value.length; i++) {
             if (value[i].type == '무기') {
               state = state.copyWith(weapon: value[i]);
-            }
-            else if (value[i].type == '투구') {
+            } else if (value[i].type == '투구') {
               state = state.copyWith(helmet: value[i]);
-            }
-            else if (value[i].type == '상의') {
+            } else if (value[i].type == '상의') {
               state = state.copyWith(armor: value[i]);
-            }
-            else if (value[i].type == '하의') {
+            } else if (value[i].type == '하의') {
               state = state.copyWith(pants: value[i]);
-            }
-            else if (value[i].type == '장갑') {
+            } else if (value[i].type == '장갑') {
               state = state.copyWith(glove: value[i]);
-            }
-            else if (value[i].type == '어깨') {
+            } else if (value[i].type == '어깨') {
               state = state.copyWith(shoulder: value[i]);
+            } else if (value[i].type == '목걸이') {
+              state = state.copyWith(necklace: value[i]);
+            } else if (value[i].type == '귀걸이') {
+              List<CharacterEquipment>? updatedEarrings = [...state.earRings ?? [], value[i]];
+              state = state.copyWith(earRings: updatedEarrings);
+            }else if (value[i].type == '반지') {
+              List<CharacterEquipment>? updatedRings = [...state.rings ?? [], value[i]];
+              state = state.copyWith(rings: updatedRings);
             }
-
+            else if (value[i].type == '팔찌') {
+              state = state.copyWith(bracelet: value[i]);
+            }
+            else if (value[i].type == '어빌리티 스톤') {
+              state = state.copyWith(stone: value[i]);
+            }
           }
         })
         .whenComplete(() {
@@ -102,7 +111,7 @@ class ProfileController extends StateNotifier<ProfileState> {
     return level;
   }
 
-  Future<void> tabBackButton() async{
+  Future<void> tabBackButton() async {
     state = ProfileState();
   }
 }

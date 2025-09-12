@@ -15,6 +15,11 @@ class ProfileState {
   final CharacterEquipment? armor;
   final CharacterEquipment? pants;
   final CharacterEquipment? glove;
+  final CharacterEquipment? necklace;
+  final List<CharacterEquipment>? rings;
+  final List<CharacterEquipment>? earRings;
+  final CharacterEquipment? bracelet;
+  final CharacterEquipment? stone;
 
   ProfileState({
     this.profile,
@@ -28,8 +33,12 @@ class ProfileState {
     this.armor,
     this.pants,
     this.glove,
+    this.necklace,
+    this.rings,
+    this.earRings,
+    this.bracelet,
+    this.stone,
   });
-
 
   ProfileState copyWith({
     CharacterProfile? profile,
@@ -43,9 +52,14 @@ class ProfileState {
     CharacterEquipment? armor,
     CharacterEquipment? pants,
     CharacterEquipment? glove,
+    CharacterEquipment? necklace,
+    List<CharacterEquipment>? rings,
+    List<CharacterEquipment>? earRings,
+    CharacterEquipment? bracelet,
+    CharacterEquipment? stone,
   }) {
     return ProfileState(
-      profile: profile ??this.profile,
+      profile: profile ?? this.profile,
       equipment: equipment ?? this.equipment,
       profileLoading: profileLoading ?? this.profileLoading,
       tabViewLoading: tabViewLoading ?? this.tabViewLoading,
@@ -56,6 +70,11 @@ class ProfileState {
       armor: armor ?? this.armor,
       pants: pants ?? this.pants,
       glove: glove ?? this.glove,
+      necklace: necklace ?? this.necklace,
+      earRings: earRings ?? this.earRings,
+      rings: rings ?? this.rings,
+      bracelet: bracelet ?? this.bracelet,
+      stone: stone ?? this.stone,
     );
   }
 }

@@ -209,10 +209,20 @@ class _HomeViewState extends ConsumerState<ProfileView> {
                                         ),
                                       ),
                                     ),
-                                    state.weapon!.tooltip!.element009!.value ==
-                                            null
-                                        ? Container()
-                                        : Text(
+                                    (state
+                                                    .weapon!
+                                                    .tooltip!
+                                                    .element009
+                                                    ?.value?['Element_000']?['topStr'] !=
+                                                null &&
+                                            !state
+                                                .weapon!
+                                                .tooltip!
+                                                .element009!
+                                                .value['Element_000']['topStr']
+                                                .toString()
+                                                .contains("에스더"))
+                                        ? Text(
                                             transcendence(
                                                   state
                                                       .weapon!
@@ -221,7 +231,24 @@ class _HomeViewState extends ConsumerState<ProfileView> {
                                                       .value['Element_000']['topStr'],
                                                 ) ??
                                                 "",
-                                          ),
+                                          )
+                                        : (state
+                                                  .weapon!
+                                                  .tooltip!
+                                                  .element010
+                                                  ?.value?['Element_000']?['topStr'] !=
+                                              null)
+                                        ? Text(
+                                            transcendence(
+                                                  state
+                                                      .weapon!
+                                                      .tooltip!
+                                                      .element010!
+                                                      .value['Element_000']['topStr'],
+                                                ) ??
+                                                "",
+                                          )
+                                        : Container(),
                                   ],
                                 ),
                               ],
@@ -243,7 +270,101 @@ class _HomeViewState extends ConsumerState<ProfileView> {
                   state.glove == null
                       ? Container()
                       : buildEquipmentItem(state, controller, state.glove!),
-
+                  Text('악세'),
+                  state.necklace == null
+                      ? buildEmptyEquipment()
+                      : buildAccessories(state, controller, state.necklace!),
+                  state.earRings == null
+                      ? Column(
+                          children: [
+                            buildEmptyEquipment(),
+                            buildEmptyEquipment(),
+                          ],
+                        )
+                      : state.earRings!.length == 1
+                      ? Column(
+                          children: [
+                            buildAccessories(
+                              state,
+                              controller,
+                              state.earRings!.first,
+                            ),
+                            buildEmptyEquipment(),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            for (int i = 0; i < state.earRings!.length; i++)
+                              buildAccessories(
+                                state,
+                                controller,
+                                state.earRings![i],
+                              ),
+                          ],
+                        ),
+                  state.rings == null
+                      ? Column(
+                          children: [
+                            buildEmptyEquipment(),
+                            buildEmptyEquipment(),
+                          ],
+                        )
+                      : state.rings!.length == 1
+                      ? Column(
+                          children: [
+                            buildAccessories(
+                              state,
+                              controller,
+                              state.rings!.first,
+                            ),
+                            buildEmptyEquipment(),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            for (int i = 0; i < state.rings!.length; i++)
+                              buildAccessories(
+                                state,
+                                controller,
+                                state.rings![i],
+                              ),
+                          ],
+                        ),
+                  //팔찌
+                  state.bracelet == null
+                      ? buildEmptyEquipment()
+                      : buildBracelet(state),
+                  state.stone == null
+                      ? buildEmptyEquipment()
+                      : Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                print(state.stone!);
+                              },
+                              child: GradeContainer(
+                                icon: state.stone!.icon,
+                                grade: state.stone!.grade,
+                              ),
+                            ),
+                            Column(
+                              children: [
+                                for (int i = 0; i < 3; i++)
+                                  TooltipText(
+                                    state
+                                        .stone!
+                                        .tooltip!
+                                        .element007!
+                                        .value['Element_000']['contentStr']['Element_00$i']['contentStr']
+                                        .toString()
+                                        .replaceAll("[", "")
+                                        .replaceAll("]", "")
+                                        .replaceAll(RegExp(r"<br>|<BR>"), ""),
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
                 ],
               ),
               // state.tabViewLoading
@@ -357,6 +478,77 @@ class _HomeViewState extends ConsumerState<ProfileView> {
     );
   }
 
+  Container buildEmptyEquipment() {
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.black,
+      ),
+    );
+  }
+
+  Row buildBracelet(ProfileState state) {
+    return Row(
+      children: [
+        Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            GestureDetector(
+              onTap: () {
+                print(state.bracelet);
+              },
+              child: GradeContainer(
+                icon: state.bracelet!.icon,
+                grade: state.bracelet!.grade,
+              ),
+            ),
+          ],
+        ),
+        Text(state.bracelet!.grade),
+        Expanded(
+          child: TooltipText(
+            state.bracelet!.tooltip!.element005!.value['Element_001'],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row buildAccessories(
+    ProfileState state,
+    ProfileController controller,
+    CharacterEquipment item,
+  ) {
+    return Row(
+      children: [
+        Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            GestureDetector(
+              onTap: () {
+                print(item);
+              },
+              child: GradeContainer(icon: item.icon, grade: item.grade),
+            ),
+            //품질 프로그레스바
+            QualityProgressbar(
+              qualityValue: item.tooltip!.element001!.value['qualityValue'],
+              progressColor: controller.getQualityColor(
+                item.tooltip!.element001!.value['qualityValue'],
+              ),
+            ),
+          ],
+        ),
+        Text(item.grade),
+        Expanded(
+          child: TooltipText(item.tooltip!.element006!.value['Element_001']),
+        ),
+      ],
+    );
+  }
+
   Row buildEquipmentItem(
     ProfileState state,
     ProfileController controller,
@@ -367,7 +559,12 @@ class _HomeViewState extends ConsumerState<ProfileView> {
         Stack(
           alignment: Alignment.bottomCenter,
           children: [
-            GradeContainer(icon: item.icon, grade: item.grade),
+            GestureDetector(
+              onTap: () {
+                print(item);
+              },
+              child: GradeContainer(icon: item.icon, grade: item.grade),
+            ),
             //품질 프로그레스바
             QualityProgressbar(
               qualityValue: item.tooltip!.element001!.value['qualityValue'],
@@ -407,13 +604,26 @@ class _HomeViewState extends ConsumerState<ProfileView> {
                     ),
                   ),
                 ),
-                item.tooltip!.element010!.value == null ||
-                        item.tooltip!.element005!.value.toString().contains(
-                              '초월',
-                            ) ==
-                            false
-                    ? Container()
-                    : Text(
+                // element009 먼저 확인
+                item.tooltip?.element009?.value?['Element_000']?['topStr']
+                            ?.toString()
+                            .contains('초월') ==
+                        true
+                    ? Text(
+                        transcendence(
+                              item
+                                  .tooltip!
+                                  .element009!
+                                  .value['Element_000']['topStr'],
+                            ) ??
+                            "",
+                      )
+                    // 없으면 element010 확인
+                    : item.tooltip?.element010?.value?['Element_000']?['topStr']
+                              ?.toString()
+                              .contains('초월') ==
+                          true
+                    ? Text(
                         transcendence(
                               item
                                   .tooltip!
@@ -421,167 +631,57 @@ class _HomeViewState extends ConsumerState<ProfileView> {
                                   .value['Element_000']['topStr'],
                             ) ??
                             "",
-                      ),
+                      )
+                    : Container(),
               ],
             ),
           ],
         ),
         //엘릭서
-        item.tooltip!.element011!.value.isEmpty ||
-                item.tooltip!.element011!.value.toString().contains('엘릭서') ==
-                    false
-            ? Container()
-            : Column(
-                children: [
-                  Builder(
-                    builder: (context) {
-                      final elixirElements =
-                          item.tooltip!.element011!.value
-                              as Map<String, dynamic>;
-                      final elixirItemElements =
-                          item
-                                  .tooltip!
-                                  .element011!
-                                  .value['Element_000']['contentStr']
-                              as Map<String, dynamic>;
-                      if (elixirElements.isEmpty) {
-                        return Container();
-                      } else {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            elixirItemElements.isNotEmpty
-                                ? TooltipText(
-                                    elixir(
-                                      item
-                                          .tooltip!
-                                          .element011!
-                                          .value['Element_000']['contentStr']['Element_000']['contentStr'],
-                                    ),
-                                  )
-                                : Container(),
-                            elixirItemElements.length >= 2
-                                ? TooltipText(
-                                    elixir(
-                                      item
-                                          .tooltip!
-                                          .element011!
-                                          .value['Element_000']['contentStr']['Element_001']['contentStr'],
-                                    ),
-                                  )
-                                : Container(),
-                          ],
-                        );
-                      }
-                    },
-                  ),
-                ],
-              ),
+        buildElixir(item),
       ],
     );
   }
 
-  Padding buildAccessories(
-    List<CharacterEquipment>? equipment,
-    int i,
-    ProfileController controller,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: GestureDetector(
-        onTap: () {},
-        child: Container(
-          width: double.infinity,
-          child: Row(
-            children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.black),
-                      image: DecorationImage(
-                        image: NetworkImage(equipment![i].icon),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(
-                          width: 55,
-                          height: 10,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: LinearProgressIndicator(
-                              value:
-                                  equipment[i]
-                                      .tooltip!
-                                      .element001!
-                                      .value['qualityValue'] /
-                                  100,
-                              minHeight: 10,
-                              backgroundColor: Colors.black26,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                controller.getQualityColor(
-                                  equipment[i]
-                                      .tooltip!
-                                      .element001!
-                                      .value['qualityValue'],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Text(
-                          '${equipment[i].tooltip!.element001!.value['qualityValue']}',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 10,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(extractEnhanceLevel(equipment[i].name)),
-                  SizedBox(width: 4),
-                  Text(equipment[i].grade),
-                  SizedBox(width: 4),
-                  equipment[i].tooltip == null
-                      ? Container()
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                print(equipment[i].tooltip!.element006!.value);
-                              },
-                              child: TooltipText(
-                                equipment[i]
-                                    .tooltip!
-                                    .element006!
-                                    .value['Element_001'],
-                              ),
-                            ),
-                          ],
-                        ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+  Widget buildElixir(CharacterEquipment item) {
+    final element010Value = item.tooltip?.element010?.value;
+    final element011Value = item.tooltip?.element011?.value;
+
+    dynamic elixirSource;
+
+    if (element010Value != null && element010Value.toString().contains('엘릭서')) {
+      elixirSource = element010Value;
+    } else if (element011Value != null &&
+        element011Value.toString().contains('엘릭서')) {
+      elixirSource = element011Value;
+    }
+
+    if (elixirSource == null) {
+      return Container(); // 둘 다 없으면 빈 위젯
+    }
+
+    final elixirElements = elixirSource as Map<String, dynamic>;
+    final elixirItemElements =
+        elixirSource['Element_000']['contentStr'] as Map<String, dynamic>?;
+
+    if (elixirElements.isEmpty || elixirItemElements == null) {
+      return Container();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        elixirItemElements.isNotEmpty
+            ? TooltipText(
+                elixir(elixirItemElements['Element_000']['contentStr']),
+              )
+            : Container(),
+        elixirItemElements.length >= 2
+            ? TooltipText(
+                elixir(elixirItemElements['Element_001']['contentStr']),
+              )
+            : Container(),
+      ],
     );
   }
 
