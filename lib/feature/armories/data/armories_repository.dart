@@ -1,6 +1,7 @@
 import 'package:cjylostark/dio/base_dio_api.dart';
 import 'package:cjylostark/feature/armories/domain/character_equipment.dart';
 import 'package:cjylostark/feature/armories/domain/character_profile.dart';
+import 'package:cjylostark/feature/armories/domain/gem_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,5 +34,14 @@ class ArmoriesRepository {
         .map((e) => CharacterEquipment.fromJson(e as Map<String, dynamic>))
         .toList();
     return equipment;
+  }
+
+  Future<GemResponse> getGem(String characterName) async {
+    Response response = await ref
+        .read(dioProvider)
+        .dio
+        .get('/armories/characters/$characterName/gems');
+    final gemResponse = GemResponse.fromJson(response.data);
+    return gemResponse;
   }
 }

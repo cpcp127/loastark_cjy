@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cjylostark/feature/armories/data/armories_repository.dart';
 import 'package:cjylostark/feature/armories/domain/character_equipment.dart';
+import 'package:cjylostark/feature/armories/domain/gem_model.dart';
 import 'package:cjylostark/feature/armories/presentation/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,8 +17,11 @@ class ProfileController extends StateNotifier<ProfileState> {
 
   ProfileController(this.ref) : super(ProfileState());
 
-  Future<void> changeTabBarIndex(int index) async {
+  Future<void> changeTabBarIndex(int index, String nickname) async {
     state = state.copyWith(tabBarIndex: index);
+    if (index == 1) {
+      await getGem(nickname);
+    }
   }
 
   Future<void> searchProfile(String nickName) async {
@@ -35,6 +39,50 @@ class ProfileController extends StateNotifier<ProfileState> {
         .catchError((e) {
           print('프로필 불러오기 에러 : $e');
         });
+  }
+
+  Future<void> getGem(String nickname) async {
+    state = state.copyWith(tabViewLoading: true);
+    if (state.gem == null) {
+      await ref
+          .read(armoriesRepositoryProvider)
+          .getGem(nickname)
+          .then((value) {
+            state = state.copyWith(gem: value);
+            final Map<Gem, GemSkill> damageGemMap = {};
+            final Map<Gem, GemSkill> cooldownGemMap = {};
+
+            for (final gem in value.gems) {
+              final skill = value.effects.skills.firstWhere(
+                (s) => s.gemSlot == gem.slot,
+                orElse: () => null as GemSkill,
+              );
+
+              if (skill != null) {
+                final joinedDesc = skill.description.join(" ");
+                if (joinedDesc.contains("피해")) {
+                  damageGemMap[gem] = skill;
+                } else if (joinedDesc.contains("재사용")) {
+                  cooldownGemMap[gem] = skill;
+                }
+              }
+            }
+
+            // state 갱신
+            state = state.copyWith(
+              damageGemMap: damageGemMap,
+              cooldownGemMap: cooldownGemMap,
+            );
+          })
+          .whenComplete(() {
+            state = state.copyWith(tabViewLoading: false);
+          })
+          .catchError((e) {
+            print('보석 불러오기 에러 : $e');
+          });
+    } else {
+      state = state.copyWith(tabViewLoading: false);
+    }
   }
 
   Future<void> getEquipment(String nickName) async {
@@ -60,16 +108,20 @@ class ProfileController extends StateNotifier<ProfileState> {
             } else if (value[i].type == '목걸이') {
               state = state.copyWith(necklace: value[i]);
             } else if (value[i].type == '귀걸이') {
-              List<CharacterEquipment>? updatedEarrings = [...state.earRings ?? [], value[i]];
+              List<CharacterEquipment>? updatedEarrings = [
+                ...state.earRings ?? [],
+                value[i],
+              ];
               state = state.copyWith(earRings: updatedEarrings);
-            }else if (value[i].type == '반지') {
-              List<CharacterEquipment>? updatedRings = [...state.rings ?? [], value[i]];
+            } else if (value[i].type == '반지') {
+              List<CharacterEquipment>? updatedRings = [
+                ...state.rings ?? [],
+                value[i],
+              ];
               state = state.copyWith(rings: updatedRings);
-            }
-            else if (value[i].type == '팔찌') {
+            } else if (value[i].type == '팔찌') {
               state = state.copyWith(bracelet: value[i]);
-            }
-            else if (value[i].type == '어빌리티 스톤') {
+            } else if (value[i].type == '어빌리티 스톤') {
               state = state.copyWith(stone: value[i]);
             }
           }

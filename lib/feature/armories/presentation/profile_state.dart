@@ -1,5 +1,6 @@
 import 'package:cjylostark/feature/armories/domain/character_equipment.dart';
 import 'package:cjylostark/feature/armories/domain/character_profile.dart';
+import 'package:cjylostark/feature/armories/domain/gem_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,6 +21,9 @@ class ProfileState {
   final List<CharacterEquipment>? earRings;
   final CharacterEquipment? bracelet;
   final CharacterEquipment? stone;
+  final GemResponse? gem;
+  final Map<Gem, GemSkill>? damageGemMap;
+  final Map<Gem, GemSkill>? cooldownGemMap;
 
   ProfileState({
     this.profile,
@@ -38,6 +42,9 @@ class ProfileState {
     this.earRings,
     this.bracelet,
     this.stone,
+    this.gem,
+    this.damageGemMap,
+    this.cooldownGemMap,
   });
 
   ProfileState copyWith({
@@ -57,6 +64,9 @@ class ProfileState {
     List<CharacterEquipment>? earRings,
     CharacterEquipment? bracelet,
     CharacterEquipment? stone,
+    GemResponse? gem,
+    Map<Gem, GemSkill>? damageGemMap,
+    Map<Gem, GemSkill>? cooldownGemMap,
   }) {
     return ProfileState(
       profile: profile ?? this.profile,
@@ -75,6 +85,9 @@ class ProfileState {
       rings: rings ?? this.rings,
       bracelet: bracelet ?? this.bracelet,
       stone: stone ?? this.stone,
+      gem: gem ?? this.gem,
+      damageGemMap: damageGemMap ?? this.damageGemMap,
+      cooldownGemMap: cooldownGemMap ?? this.cooldownGemMap,
     );
   }
 }
