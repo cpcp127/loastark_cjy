@@ -22,6 +22,8 @@ class ProfileController extends StateNotifier<ProfileState> {
     state = state.copyWith(tabBarIndex: index);
     if (index == 1) {
       await getGem(nickname);
+    } else if (index == 2) {
+      await getEngravings(nickname);
     }
   }
 
@@ -40,6 +42,24 @@ class ProfileController extends StateNotifier<ProfileState> {
         .catchError((e) {
           print('프로필 불러오기 에러 : $e');
         });
+  }
+
+  Future<void> getEngravings(String nickname) async {
+    state = state.copyWith(tabViewLoading: true);
+    if (state.engravings == null) {
+      await ref
+          .read(armoriesRepositoryProvider)
+          .getEngravings(nickname)
+          .then((value) {
+            state = state.copyWith(engravings: value);
+          })
+          .whenComplete(() {
+            state = state.copyWith(tabViewLoading: false);
+          })
+          .catchError((e) {
+            print('각인 불러오기 에러 : $e');
+          });
+    }
   }
 
   Future<void> getGem(String nickname) async {
@@ -167,6 +187,7 @@ class ProfileController extends StateNotifier<ProfileState> {
   Future<void> tabBackButton() async {
     state = ProfileState();
   }
+
   String extractText(String rawHtml) {
     final document = html_parser.parse(rawHtml);
     return document.body?.text.trim() ?? '';

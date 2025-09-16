@@ -3,6 +3,7 @@ import 'package:cjylostark/custom_widget/grade_container.dart';
 import 'package:cjylostark/custom_widget/quality_progressbar.dart';
 import 'package:cjylostark/custom_widget/search_textfield.dart';
 import 'package:cjylostark/feature/armories/domain/character_equipment.dart';
+import 'package:cjylostark/feature/armories/presentation/engravings_tab_view.dart';
 import 'package:cjylostark/feature/armories/presentation/equipment_tab_view.dart';
 import 'package:cjylostark/feature/armories/presentation/gem_tab_view.dart';
 import 'package:cjylostark/feature/armories/presentation/profile_controller.dart';
@@ -141,7 +142,9 @@ class _HomeViewState extends ConsumerState<ProfileView> {
                   ? EquipmentTabView()
                   : state.tabBarIndex == 1
                   ? GemTabView()
-                  : Column(),
+                  : state.tabBarIndex == 2
+                  ? EngravingsTabView()
+                  : Container(),
             ],
           ),
         ),

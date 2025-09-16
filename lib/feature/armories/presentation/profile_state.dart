@@ -1,5 +1,6 @@
 import 'package:cjylostark/feature/armories/domain/character_equipment.dart';
 import 'package:cjylostark/feature/armories/domain/character_profile.dart';
+import 'package:cjylostark/feature/armories/domain/engravings_model.dart';
 import 'package:cjylostark/feature/armories/domain/gem_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,6 +25,7 @@ class ProfileState {
   final GemResponse? gem;
   final Map<Gem, GemSkill>? damageGemMap;
   final Map<Gem, GemSkill>? cooldownGemMap;
+  final EngravingsModel? engravings;
 
   ProfileState({
     this.profile,
@@ -45,6 +47,7 @@ class ProfileState {
     this.gem,
     this.damageGemMap,
     this.cooldownGemMap,
+    this.engravings,
   });
 
   ProfileState copyWith({
@@ -67,6 +70,7 @@ class ProfileState {
     GemResponse? gem,
     Map<Gem, GemSkill>? damageGemMap,
     Map<Gem, GemSkill>? cooldownGemMap,
+    EngravingsModel? engravings,
   }) {
     return ProfileState(
       profile: profile ?? this.profile,
@@ -88,6 +92,7 @@ class ProfileState {
       gem: gem ?? this.gem,
       damageGemMap: damageGemMap ?? this.damageGemMap,
       cooldownGemMap: cooldownGemMap ?? this.cooldownGemMap,
+      engravings: engravings ?? this.engravings,
     );
   }
 }

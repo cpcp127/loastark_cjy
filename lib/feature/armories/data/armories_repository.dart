@@ -1,6 +1,7 @@
 import 'package:cjylostark/dio/base_dio_api.dart';
 import 'package:cjylostark/feature/armories/domain/character_equipment.dart';
 import 'package:cjylostark/feature/armories/domain/character_profile.dart';
+import 'package:cjylostark/feature/armories/domain/engravings_model.dart';
 import 'package:cjylostark/feature/armories/domain/gem_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,4 +45,14 @@ class ArmoriesRepository {
     final gemResponse = GemResponse.fromJson(response.data);
     return gemResponse;
   }
+
+  Future<EngravingsModel> getEngravings(String characterName) async{
+    Response response = await ref
+        .read(dioProvider)
+        .dio
+        .get('/armories/characters/$characterName/engravings');
+    final engravings = EngravingsModel.fromJson(response.data);
+    return engravings;
+  }
+
 }
