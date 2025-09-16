@@ -6,6 +6,7 @@ import 'package:cjylostark/feature/armories/domain/gem_model.dart';
 import 'package:cjylostark/feature/armories/presentation/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:html/parser.dart' as html_parser;
 
 final profileControllerProvider =
     StateNotifierProvider<ProfileController, ProfileState>((ref) {
@@ -165,5 +166,9 @@ class ProfileController extends StateNotifier<ProfileState> {
 
   Future<void> tabBackButton() async {
     state = ProfileState();
+  }
+  String extractText(String rawHtml) {
+    final document = html_parser.parse(rawHtml);
+    return document.body?.text.trim() ?? '';
   }
 }
