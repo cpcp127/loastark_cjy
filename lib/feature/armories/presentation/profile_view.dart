@@ -3,6 +3,7 @@ import 'package:cjylostark/custom_widget/grade_container.dart';
 import 'package:cjylostark/custom_widget/quality_progressbar.dart';
 import 'package:cjylostark/custom_widget/search_textfield.dart';
 import 'package:cjylostark/feature/armories/domain/character_equipment.dart';
+import 'package:cjylostark/feature/armories/presentation/ark_passive_tab_view.dart';
 import 'package:cjylostark/feature/armories/presentation/engravings_tab_view.dart';
 import 'package:cjylostark/feature/armories/presentation/equipment_tab_view.dart';
 import 'package:cjylostark/feature/armories/presentation/gem_tab_view.dart';
@@ -73,7 +74,7 @@ class _HomeViewState extends ConsumerState<ProfileView> {
     final profile = ref.watch(profileControllerProvider).profile;
     final equipment = ref.watch(profileControllerProvider).equipment;
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -127,7 +128,13 @@ class _HomeViewState extends ConsumerState<ProfileView> {
                 ],
               ),
               SizedBox(height: 20),
+
               TabBar(
+                padding: EdgeInsets.zero, // 👈 전체 좌우 여백 제거
+                tabAlignment: TabAlignment.start,
+                isScrollable: true,
+                indicatorPadding: EdgeInsets.zero, // 👈 인디케이터 여백 제거
+                labelPadding: EdgeInsets.symmetric(horizontal: 16), // 👈 탭 간 간격만 주기
                 onTap: (index) {
                   controller.changeTabBarIndex(index, profile.characterName);
                 },
@@ -135,7 +142,8 @@ class _HomeViewState extends ConsumerState<ProfileView> {
                   Tab(text: '장비'),
                   Tab(text: '보석'),
                   Tab(text: '각인'),
-                  Tab(text: '각인'),
+                  Tab(text: '아크패시브'),
+                  Tab(text: '아크그리드'),
                 ],
               ),
               state.tabBarIndex == 0
@@ -144,7 +152,7 @@ class _HomeViewState extends ConsumerState<ProfileView> {
                   ? GemTabView()
                   : state.tabBarIndex == 2
                   ? EngravingsTabView()
-                  : Container(),
+                  : ArkPassiveTabView(),
             ],
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:cjylostark/feature/armories/domain/ark_passive_model.dart';
 import 'package:cjylostark/feature/armories/domain/character_equipment.dart';
 import 'package:cjylostark/feature/armories/domain/character_profile.dart';
 import 'package:cjylostark/feature/armories/domain/engravings_model.dart';
@@ -26,6 +27,7 @@ class ProfileState {
   final Map<Gem, GemSkill>? damageGemMap;
   final Map<Gem, GemSkill>? cooldownGemMap;
   final EngravingsModel? engravings;
+  final ArkPassiveModel? arkPassive;
 
   ProfileState({
     this.profile,
@@ -48,6 +50,7 @@ class ProfileState {
     this.damageGemMap,
     this.cooldownGemMap,
     this.engravings,
+    this.arkPassive,
   });
 
   ProfileState copyWith({
@@ -71,6 +74,7 @@ class ProfileState {
     Map<Gem, GemSkill>? damageGemMap,
     Map<Gem, GemSkill>? cooldownGemMap,
     EngravingsModel? engravings,
+    ArkPassiveModel? arkPassive,
   }) {
     return ProfileState(
       profile: profile ?? this.profile,
@@ -93,6 +97,7 @@ class ProfileState {
       damageGemMap: damageGemMap ?? this.damageGemMap,
       cooldownGemMap: cooldownGemMap ?? this.cooldownGemMap,
       engravings: engravings ?? this.engravings,
+      arkPassive: arkPassive ?? this.arkPassive,
     );
   }
 }

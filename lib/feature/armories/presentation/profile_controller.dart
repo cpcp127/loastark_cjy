@@ -24,6 +24,8 @@ class ProfileController extends StateNotifier<ProfileState> {
       await getGem(nickname);
     } else if (index == 2) {
       await getEngravings(nickname);
+    } else if (index == 3) {
+      await getArkPassive(nickname);
     }
   }
 
@@ -42,6 +44,24 @@ class ProfileController extends StateNotifier<ProfileState> {
         .catchError((e) {
           print('프로필 불러오기 에러 : $e');
         });
+  }
+
+  Future<void> getArkPassive(String nickname) async {
+    state = state.copyWith(tabViewLoading: true);
+    if (state.arkPassive == null) {
+      await ref
+          .read(armoriesRepositoryProvider)
+          .getArkPassive(nickname)
+          .then((value) {
+            state = state.copyWith(arkPassive: value);
+          })
+          .whenComplete(() {
+            state = state.copyWith(tabViewLoading: false);
+          })
+          .catchError((e) {
+            print('앜패 불러오기 에러 : $e');
+          });
+    }
   }
 
   Future<void> getEngravings(String nickname) async {
@@ -191,5 +211,97 @@ class ProfileController extends StateNotifier<ProfileState> {
   String extractText(String rawHtml) {
     final document = html_parser.parse(rawHtml);
     return document.body?.text.trim() ?? '';
+  }
+
+  String? getEngravingsIcon(String name) {
+    if (name == '슈퍼 차지') {
+      return 'assets/images/engravings/super_charge.png';
+    } else if (name == '바리케이드') {
+      return 'assets/images/engravings/barricade.png';
+    } else if (name == '결투의 대가') {
+      return 'assets/images/engravings/master_brawler.png';
+    } else if (name == '원한') {
+      return 'assets/images/engravings/grudge.png';
+    } else if (name == '저주받은 인형') {
+      return 'assets/images/engravings/cursed_doll.png';
+    } else if (name == '정기 흡수') {
+      return 'assets/images/engravings/spirit_absorption.png';
+    } else if (name == '안정된 상태') {
+      return 'assets/images/engravings/stabilized_status.png';
+    } else if (name == '예리한 둔기') {
+      return 'assets/images/engravings/keen_blunt_weapon.png';
+    } else if (name == '마나 효율 증가') {
+      return 'assets/images/engravings/mp_efficiency_increase.png';
+    } else if (name == '선수필승') {
+      return 'assets/images/engravings/preemptive_strike.png';
+    } else if (name == '승부사') {
+      return 'assets/images/engravings/contender.png';
+    } else if (name == '기습의 대가') {
+      return 'assets/images/engravings/ambush_master.png';
+    } else if (name == '돌격대장') {
+      return 'assets/images/engravings/raid_captain.png';
+    } else if (name == '질량 증가') {
+      return 'assets/images/engravings/mass_increase.png';
+    } else if (name == '타격의 대가') {
+      return 'assets/images/engravings/hit_master.png';
+    } else if (name == '아드레날린') {
+      return 'assets/images/engravings/adrenaline.png';
+    } else if (name == '정밀 단도') {
+      return 'assets/images/engravings/precise_dagger.png';
+    } else if (name == '강화 방패') {
+      return 'assets/images/engravings/enhanced_shield.png';
+    } else if (name == '부러진 뼈') {
+      return 'assets/images/engravings/broken_bone.png';
+    } else if (name == '에테르 포식자') {
+      return 'assets/images/engravings/ether_predator.png';
+    } else if (name == '중갑 착용') {
+      return 'assets/images/engravings/heavy_armor.png';
+    } else if (name == '굳은 의지') {
+      return 'assets/images/engravings/strong_will.png';
+    } else if (name == '급소 타격') {
+      return 'assets/images/engravings/vital_point_hit.png';
+    } else if (name == '최대 마나 증가') {
+      return 'assets/images/engravings/max_mp_Increase.png';
+    } else if (name == '탈출의 명수') {
+      return 'assets/images/engravings/master_of_escape.png';
+    } else if (name == '실드관통') {
+      return 'assets/images/engravings/shield_piercing.png';
+    } else if (name == '달인의 저력') {
+      return 'assets/images/engravings/master_tenacity.png';
+    } else if (name == '여신의 가호') {
+      return 'assets/images/engravings/divine_protection.png';
+    } else if (name == '번개의 분노') {
+      return 'assets/images/engravings/lightning_fury.png';
+    } else if (name == '각성') {
+      return 'assets/images/engravings/awakening.png';
+    } else if (name == '구슬동자') {
+      return 'assets/images/engravings/drops_of_ether.png';
+    } else if (name == '불굴') {
+      return 'assets/images/engravings/fortitude.png';
+    } else if (name == '분쇄의 주먹') {
+      return 'assets/images/engravings/crushing_fist.png';
+    } else if (name == '마나의 흐름') {
+      return 'assets/images/engravings/magick_stream.png';
+    } else if (name == '위기 모면') {
+      return 'assets/images/engravings/crisis_evasion.png';
+    } else if (name == '폭발물 전문가') {
+      return 'assets/images/engravings/explosive_expert.png';
+    } else if (name == '전문의') {
+      return 'assets/images/engravings/expert.png';
+    } else if (name == '약자 무시') {
+      return 'assets/images/engravings/disrespect.png';
+    } else if (name == '강령술') {
+      return 'assets/images/engravings/necromancy.png';
+    } else if (name == '시선 집중') {
+      return 'assets/images/engravings/sight_focus.png';
+    } else if (name == '추진력') {
+      return 'assets/images/engravings/propulsion.png';
+    } else if (name == '속전속결') {
+      return 'assets/images/engravings/all_out_attack.png';
+    } else if (name == '긴급구조') {
+      return 'assets/images/engravings/emergency_rescue.png';
+    } else {
+      return null;
+    }
   }
 }
