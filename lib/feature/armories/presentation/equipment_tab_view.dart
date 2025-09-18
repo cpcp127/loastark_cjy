@@ -377,7 +377,7 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
           children: [
             GestureDetector(
               onTap: () {
-                print(item);
+                print(item.tooltip!.element004!.value);
               },
               child: GradeContainer(icon: item.icon, grade: item.grade),
             ),
@@ -392,7 +392,16 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
         ),
         Text(item.grade),
         Expanded(
-          child: TooltipText(item.tooltip!.element006!.value['Element_001']),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TooltipText(item.tooltip!.element006!.value['Element_001']),
+
+            ],
+          ),
+        ),
+        Text(
+          '힘/민/지 ${controller.getAccessoriesPercent(item.type, controller.extractStrengthValue(item.tooltip!.element004!.value.toString()))} ',
         ),
       ],
     );

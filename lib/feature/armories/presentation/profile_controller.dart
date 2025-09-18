@@ -175,6 +175,48 @@ class ProfileController extends StateNotifier<ProfileState> {
         });
   }
 
+  String getAccessoriesPercent(String itemType, int value) {
+    int minValue;
+    int maxValue;
+
+    if (itemType == '반지') {
+      minValue = 10962;
+      maxValue = 12897;
+    } else if (itemType == '귀걸이') {
+      minValue = 11806;
+      maxValue = 13889;
+    } else if (itemType == '목걸이') {
+      minValue = 15178;
+      maxValue = 17857;
+    } else {
+      return "0%"; // 알 수 없는 타입이면 0%
+    }
+
+    // 범위를 벗어난 경우 보정
+    if (value < minValue) value = minValue;
+    if (value > maxValue) value = maxValue;
+
+    // 퍼센트 계산
+    double percent = ((value - minValue) / (maxValue - minValue)) * 100;
+
+    return "${percent.toStringAsFixed(2)}%";
+  }
+
+  //악세사리 힘민지 추출
+  int extractStrengthValue(String raw) {
+    if (raw.contains("힘")) {
+      // "힘"으로 split → 두 번째 문자열만 사용
+      String part = raw.split("힘")[1].trim();
+      // "+" 제거 후 숫자만 추출
+      String numberStr = part
+          .split(RegExp(r'[^0-9]'))
+          .firstWhere((e) => e.isNotEmpty, orElse: () => "");
+
+      return int.tryParse(numberStr) ?? 0;
+    }
+    return 0;
+  }
+
   Color getQualityColor(int quality) {
     if (quality <= 9) {
       return Colors.grey;
