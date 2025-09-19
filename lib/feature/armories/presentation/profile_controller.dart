@@ -26,6 +26,8 @@ class ProfileController extends StateNotifier<ProfileState> {
       await getEngravings(nickname);
     } else if (index == 3) {
       await getArkPassive(nickname);
+    }else if (index == 4) {
+      await getArkGrid(nickname);
     }
   }
 
@@ -46,6 +48,23 @@ class ProfileController extends StateNotifier<ProfileState> {
         });
   }
 
+  Future<void> getArkGrid(String nickname) async {
+    state = state.copyWith(tabViewLoading: true);
+    if (state.arkPassive == null) {
+      await ref
+          .read(armoriesRepositoryProvider)
+          .getArkGrid(nickname)
+          .then((value) {
+        state = state.copyWith(arkGrid: value);
+      })
+          .whenComplete(() {
+        state = state.copyWith(tabViewLoading: false);
+      })
+          .catchError((e) {
+        print('아크그리드 불러오기 에러 : $e');
+      });
+    }
+  }
   Future<void> getArkPassive(String nickname) async {
     state = state.copyWith(tabViewLoading: true);
     if (state.arkPassive == null) {

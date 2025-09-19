@@ -1,4 +1,5 @@
 import 'package:cjylostark/dio/base_dio_api.dart';
+import 'package:cjylostark/feature/armories/domain/ark_grid_model.dart';
 import 'package:cjylostark/feature/armories/domain/ark_passive_model.dart';
 import 'package:cjylostark/feature/armories/domain/character_equipment.dart';
 import 'package:cjylostark/feature/armories/domain/character_profile.dart';
@@ -63,5 +64,14 @@ class ArmoriesRepository {
         .get('/armories/characters/$characterName/arkpassive');
     final arkPassive = ArkPassiveModel.fromJson(response.data);
     return arkPassive;
+  }
+
+  Future<ArkGrid> getArkGrid(String characterName) async {
+    Response response = await ref
+        .read(dioProvider)
+        .dio
+        .get('/armories/characters/$characterName/arkgrid');
+    final arkGrid = ArkGrid.fromJson(response.data);
+    return arkGrid;
   }
 }
