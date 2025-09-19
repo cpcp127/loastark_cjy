@@ -7,6 +7,7 @@ import 'package:cjylostark/feature/armories/presentation/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/parser.dart' as html_parser;
+import 'package:shared_preferences/shared_preferences.dart';
 
 final profileControllerProvider =
     StateNotifierProvider<ProfileController, ProfileState>((ref) {
@@ -18,6 +19,16 @@ class ProfileController extends StateNotifier<ProfileState> {
 
   ProfileController(this.ref) : super(ProfileState());
 
+  Future<void> getRecentSearchNickname() async {
+    final pref = await SharedPreferences.getInstance();
+
+    // 저장된 닉네임 리스트 불러오기 (없으면 빈 리스트)
+    final recent = pref.getStringList('recent_search') ?? [];
+
+    // state 갱신
+    state = state.copyWith(recentSearchNickname: recent);
+  }
+
   Future<void> changeTabBarIndex(int index, String nickname) async {
     state = state.copyWith(tabBarIndex: index);
     if (index == 1) {
@@ -26,17 +37,29 @@ class ProfileController extends StateNotifier<ProfileState> {
       await getEngravings(nickname);
     } else if (index == 3) {
       await getArkPassive(nickname);
-    }else if (index == 4) {
+    } else if (index == 4) {
       await getArkGrid(nickname);
     }
   }
 
   Future<void> searchProfile(String nickName) async {
+    final pref = await SharedPreferences.getInstance();
     state = state.copyWith(profileLoading: true);
     await ref
         .read(armoriesRepositoryProvider)
         .getProfiles(nickName)
         .then((value) async {
+          final currentList = pref.getStringList('recent_search') ?? [];
+
+          // 중복 제거 후 맨 앞에 삽입
+          currentList.remove(nickName);
+          currentList.insert(0, nickName);
+
+          // 최대 5개만 유지
+          final updatedList = currentList.take(5).toList();
+
+          await pref.setStringList('recent_search', updatedList);
+          await getRecentSearchNickname();
           await getEquipment(nickName);
           state = state.copyWith(profile: value);
         })
@@ -55,16 +78,17 @@ class ProfileController extends StateNotifier<ProfileState> {
           .read(armoriesRepositoryProvider)
           .getArkGrid(nickname)
           .then((value) {
-        state = state.copyWith(arkGrid: value);
-      })
+            state = state.copyWith(arkGrid: value);
+          })
           .whenComplete(() {
-        state = state.copyWith(tabViewLoading: false);
-      })
+            state = state.copyWith(tabViewLoading: false);
+          })
           .catchError((e) {
-        print('아크그리드 불러오기 에러 : $e');
-      });
+            print('아크그리드 불러오기 에러 : $e');
+          });
     }
   }
+
   Future<void> getArkPassive(String nickname) async {
     state = state.copyWith(tabViewLoading: true);
     if (state.arkPassive == null) {
@@ -266,7 +290,11 @@ class ProfileController extends StateNotifier<ProfileState> {
   }
 
   Future<void> tabBackButton() async {
-    state = ProfileState();
+    final pref = await SharedPreferences.getInstance();
+
+    // SharedPreferences 에 저장된 닉네임 리스트 불러오기
+    final recent = pref.getStringList('recent_search') ?? [];
+    state = ProfileState(recentSearchNickname:  recent);
   }
 
   String extractText(String rawHtml) {

@@ -61,6 +61,39 @@ class _HomeViewState extends ConsumerState<ProfileView> {
                         },
                       ),
                     ),
+                    SizedBox(height: 20),
+                    Text('최근 검색 닉네임'),
+                    Builder(
+                      builder: (context) {
+                        if(state.recentSearchNickname==null || state.recentSearchNickname!.isEmpty){
+                          return Container();
+                        }else{
+                          return Column(
+                            children: [
+                              for(int i=0;i<state.recentSearchNickname!.length;i++)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: GestureDetector(
+                                    onTap: (){
+                                      controller.searchProfile(state.recentSearchNickname![i]);
+                                    },
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.green,
+                                          borderRadius: BorderRadius.circular(16)
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                          child: Text(state.recentSearchNickname![i]),
+                                        )),
+                                  ),
+                                )
+                            ],
+                          );
+                        }
+
+                      }
+                    )
                   ],
                 ),
               ),
@@ -377,6 +410,7 @@ class _HomeViewState extends ConsumerState<ProfileView> {
   void initState() {
     super.initState();
     parms = ProfileParms(context: context, ref: ref);
+    ref.read(profileControllerProvider.notifier).getRecentSearchNickname();
   }
 }
 

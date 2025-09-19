@@ -2,7 +2,11 @@ import 'package:cjylostark/feature/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() {
+import 'service/shared_preferences_service.dart';
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPreferencesService.init();
   runApp(const MyApp());
 }
 

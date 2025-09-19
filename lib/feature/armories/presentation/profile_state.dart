@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProfileState {
+  final List<String>? recentSearchNickname;
   final CharacterProfile? profile;
   final List<CharacterEquipment>? equipment;
   final bool profileLoading;
@@ -32,6 +33,7 @@ class ProfileState {
   final ArkGrid? arkGrid;
 
   ProfileState({
+    this.recentSearchNickname,
     this.profile,
     this.equipment,
     this.profileLoading = false,
@@ -57,6 +59,7 @@ class ProfileState {
   });
 
   ProfileState copyWith({
+    List<String>? recentSearchNickname,
     CharacterProfile? profile,
     List<CharacterEquipment>? equipment,
     bool? profileLoading,
@@ -81,6 +84,7 @@ class ProfileState {
     ArkGrid? arkGrid,
   }) {
     return ProfileState(
+      recentSearchNickname: recentSearchNickname ?? this.recentSearchNickname,
       profile: profile ?? this.profile,
       equipment: equipment ?? this.equipment,
       profileLoading: profileLoading ?? this.profileLoading,
