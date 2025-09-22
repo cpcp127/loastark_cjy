@@ -1,10 +1,10 @@
-import 'package:cjylostark/feature/home.dart';
+import 'package:cjylostark/feature/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'service/shared_preferences_service.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPreferencesService.init();
   runApp(const MyApp());
@@ -19,7 +19,11 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          scaffoldBackgroundColor: Colors.white,
+          appBarTheme: AppBarTheme(
+            color: Colors.white,
+            scrolledUnderElevation: 0,
+          ),
         ),
         home: HomeView(),
       ),

@@ -19,6 +19,7 @@ class ProfileController extends StateNotifier<ProfileState> {
 
   ProfileController(this.ref) : super(ProfileState());
 
+
   Future<void> getRecentSearchNickname() async {
     final pref = await SharedPreferences.getInstance();
 
@@ -73,7 +74,7 @@ class ProfileController extends StateNotifier<ProfileState> {
 
   Future<void> getArkGrid(String nickname) async {
     state = state.copyWith(tabViewLoading: true);
-    if (state.arkPassive == null) {
+    if (state.arkGrid == null) {
       await ref
           .read(armoriesRepositoryProvider)
           .getArkGrid(nickname)

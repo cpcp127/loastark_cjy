@@ -18,88 +18,96 @@ class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({super.key});
 
   @override
-  ConsumerState createState() => _HomeViewState();
+  ConsumerState createState() => _ProfileView();
 }
 
-class _HomeViewState extends ConsumerState<ProfileView> {
+class _ProfileView extends ConsumerState<ProfileView> {
   TextEditingController nickController = TextEditingController();
   ProfileParms? parms;
 
   @override
   Widget build(BuildContext context) {
+    return buildProfileBody();
+  }
+
+  Widget buildProfileBody() {
+    final state = ref.watch(profileControllerProvider);
+    if (state.profileLoading) {
+      return buildProfileLoadingView();
+    } else if (state.profile == null) {
+      return buildSearchProfileView();
+    } else {
+      return buildProfile();
+    }
+  }
+
+  Widget buildProfileLoadingView() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [Row(), CustomLoadingWidget()],
+    );
+  }
+
+  Column buildSearchProfileView() {
     final controller = ref.read(profileControllerProvider.notifier);
     final state = ref.watch(profileControllerProvider);
-    final profile = ref.watch(profileControllerProvider).profile;
-    final equipment = ref.watch(profileControllerProvider).equipment;
-    return state.profileLoading == true
-        ? Scaffold(
-            body: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Row(), CustomLoadingWidget()],
-            ),
-          )
-        : profile == null
-        ? Container(
-            color: Colors.white,
-            child: SafeArea(
-              child: Scaffold(
-                body: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Row(),
 
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: CustomSearchTextField(
+            controller: nickController,
+            onSearch: () async {
+              await controller.searchProfile(nickController.text.trim());
+            },
+          ),
+        ),
+        SizedBox(height: 20),
+        Text('최근 검색 닉네임'),
+        Builder(
+          builder: (context) {
+            if (state.recentSearchNickname == null ||
+                state.recentSearchNickname!.isEmpty) {
+              return Container();
+            } else {
+              return Column(
+                children: [
+                  for (int i = 0; i < state.recentSearchNickname!.length; i++)
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: CustomSearchTextField(
-                        controller: nickController,
-                        onSearch: () async {
-                          await controller.searchProfile(
-                            nickController.text.trim(),
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: GestureDetector(
+                        onTap: () {
+                          controller.searchProfile(
+                            state.recentSearchNickname![i],
                           );
                         },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 10,
+                            ),
+                            child: Text(state.recentSearchNickname![i]),
+                          ),
+                        ),
                       ),
                     ),
-                    SizedBox(height: 20),
-                    Text('최근 검색 닉네임'),
-                    Builder(
-                      builder: (context) {
-                        if(state.recentSearchNickname==null || state.recentSearchNickname!.isEmpty){
-                          return Container();
-                        }else{
-                          return Column(
-                            children: [
-                              for(int i=0;i<state.recentSearchNickname!.length;i++)
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 16),
-                                  child: GestureDetector(
-                                    onTap: (){
-                                      controller.searchProfile(state.recentSearchNickname![i]);
-                                    },
-                                    child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.green,
-                                          borderRadius: BorderRadius.circular(16)
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                                          child: Text(state.recentSearchNickname![i]),
-                                        )),
-                                  ),
-                                )
-                            ],
-                          );
-                        }
-
-                      }
-                    )
-                  ],
-                ),
-              ),
-            ),
-          )
-        : buildProfile();
+                ],
+              );
+            }
+          },
+        ),
+      ],
+    );
   }
 
   Widget buildProfile() {
