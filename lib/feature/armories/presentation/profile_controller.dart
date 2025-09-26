@@ -19,7 +19,6 @@ class ProfileController extends StateNotifier<ProfileState> {
 
   ProfileController(this.ref) : super(ProfileState());
 
-
   Future<void> getRecentSearchNickname() async {
     final pref = await SharedPreferences.getInstance();
 
@@ -64,7 +63,6 @@ class ProfileController extends StateNotifier<ProfileState> {
           await getEquipment(nickName);
           await getArkPassive(nickName);
           state = state.copyWith(profile: value);
-
         })
         .whenComplete(() {
           state = state.copyWith(profileLoading: false);
@@ -262,27 +260,131 @@ class ProfileController extends StateNotifier<ProfileState> {
     }
     return 0;
   }
+
   String? extractTier4NodeName() {
     String? nodeName;
-    for(int i=0;i<state.arkPassive!.effects.length;i++){
-      if(state.arkPassive!.effects[i].description.contains('깨달음') &&state.arkPassive!.effects[i].description.contains('4티어') ){
-
-        // 1) HTML 태그 제거
-        final plain = html_parser.parse(state.arkPassive!.effects[i].description).documentElement?.text;
-        // plain 예시: "깨달음 4티어 극한의 몸놀림 Lv.3"
-
-        // 2) "4티어" 뒤쪽 텍스트만 잘라내기
-        final parts = plain!.split("4티어");
-        if (parts.length < 2) return null;
-
-        nodeName = parts[1].trim(); // "극한의 몸놀림 Lv.3"
-
-        // 3) "Lv.xxx" 제거
-        nodeName = nodeName.replaceAll(RegExp(r"Lv\.\d+"), "").trim();
+    for (int i = 0; i < state.arkPassive!.effects.length; i++) {
+      if (state.arkPassive!.effects[i].description.contains('중력 수련')) {
+        nodeName = '중력 수련';
+      } else if (state.arkPassive!.effects[i].description.contains('분노의 망치')) {
+        nodeName = '분노의 망치';
+      } else if (state.arkPassive!.effects[i].description.contains('빛의 기사')) {
+        nodeName = '빛의 기사';
+      } else if (state.arkPassive!.effects[i].description.contains('해방자')) {
+        nodeName = '해방자';
+      } else if (state.arkPassive!.effects[i].description.contains('광전사의 비기')) {
+        nodeName = '광전사의 비기';
+      } else if (state.arkPassive!.effects[i].description.contains('광기')) {
+        nodeName = '광기';
+      } else if (state.arkPassive!.effects[i].description.contains('처단자')) {
+        nodeName = '처단자';
+      } else if (state.arkPassive!.effects[i].description.contains('포식자')) {
+        nodeName = '포식자';
+      } else if (state.arkPassive!.effects[i].description.contains('고독한 기사')) {
+        nodeName = '고독한 기사';
+      } else if (state.arkPassive!.effects[i].description.contains('전투 태세')) {
+        nodeName = '전투 태세';
+      } else if (state.arkPassive!.effects[i].description.contains('축복의 오라')) {
+        nodeName = '축복의 오라';
+      } else if (state.arkPassive!.effects[i].description.contains('심판자')) {
+        nodeName = '심판자';
+      } else if (state.arkPassive!.effects[i].description.contains('세맥타통')) {
+        nodeName = '세맥타통';
+      } else if (state.arkPassive!.effects[i].description.contains('역천지체')) {
+        nodeName = '역천지체';
+      } else if (state.arkPassive!.effects[i].description.contains('초심')) {
+        nodeName = '초심';
+      } else if (state.arkPassive!.effects[i].description.contains('오의 강화')) {
+        nodeName = '오의 강화';
+      } else if (state.arkPassive!.effects[i].description.contains('수라의 길')) {
+        nodeName = '수라의 길';
+      } else if (state.arkPassive!.effects[i].description.contains('권왕파천무')) {
+        nodeName = '권왕파천무';
+      } else if (state.arkPassive!.effects[i].description.contains('오의난무')) {
+        nodeName = '오의난무';
+      } else if (state.arkPassive!.effects[i].description.contains('일격필살')) {
+        nodeName = '일격필살';
+      } else if (state.arkPassive!.effects[i].description.contains('충격 단련')) {
+        nodeName = '충격 단련';
+      } else if (state.arkPassive!.effects[i].description.contains('극의: 체술')) {
+        nodeName = '극의: 체술';
+      } else if (state.arkPassive!.effects[i].description.contains('절제')) {
+        nodeName = '절제';
+      } else if (state.arkPassive!.effects[i].description.contains('절정')) {
+        nodeName = '절정';
+      } else if (state.arkPassive!.effects[i].description.contains('사냥의 시간')) {
+        nodeName = '사냥의 시간';
+      } else if (state.arkPassive!.effects[i].description.contains('피스메이커')) {
+        nodeName = '피스메이커';
+      } else if (state.arkPassive!.effects[i].description.contains('핸드거너')) {
+        nodeName = '핸드거너';
+      } else if (state.arkPassive!.effects[i].description.contains('전술 탄환')) {
+        nodeName = '전술 탄환';
+      } else if (state.arkPassive!.effects[i].description.contains('화력 강화')) {
+        nodeName = '화력 강화';
+      } else if (state.arkPassive!.effects[i].description.contains('포격 강화')) {
+        nodeName = '포격 강화';
+      } else if (state.arkPassive!.effects[i].description.contains(
+        '아르데타인의 기술',
+      )) {
+        nodeName = '아르데타인의 기술';
+      } else if (state.arkPassive!.effects[i].description.contains('진화의 유산')) {
+        nodeName = '진화의 유산';
+      } else if (state.arkPassive!.effects[i].description.contains('죽음의 습격')) {
+        nodeName = '죽음의 습격';
+      } else if (state.arkPassive!.effects[i].description.contains('두 번째 동료')) {
+        nodeName = '두 번째 동료';
+      } else if (state.arkPassive!.effects[i].description.contains('절실한 구원')) {
+        nodeName = '절실한 구원';
+      } else if (state.arkPassive!.effects[i].description.contains('진실된 용맹')) {
+        nodeName = '진실된 용맹';
+      } else if (state.arkPassive!.effects[i].description.contains('넘치는 교감')) {
+        nodeName = '넘치는 교감';
+      } else if (state.arkPassive!.effects[i].description.contains('상급 소환사')) {
+        nodeName = '상급 소환사';
+      } else if (state.arkPassive!.effects[i].description.contains('점화')) {
+        nodeName = '점화';
+      } else if (state.arkPassive!.effects[i].description.contains('환류')) {
+        nodeName = '환류';
+      } else if (state.arkPassive!.effects[i].description.contains('황후의 은총')) {
+        nodeName = '황후의 은총';
+      } else if (state.arkPassive!.effects[i].description.contains('황제의 칙령')) {
+        nodeName = '황제의 칙령';
+      } else if (state.arkPassive!.effects[i].description.contains(
+        '멈출 수 없는 충동',
+      )) {
+        nodeName = '멈출 수 없는 충동';
+      } else if (state.arkPassive!.effects[i].description.contains('완벽한 억제')) {
+        nodeName = '완벽한 억제';
+      } else if (state.arkPassive!.effects[i].description.contains('갈증')) {
+        nodeName = '갈증';
+      } else if (state.arkPassive!.effects[i].description.contains('달의 소리')) {
+        nodeName = '달의 소리';
+      } else if (state.arkPassive!.effects[i].description.contains('잔재된 기운')) {
+        nodeName = '잔재된 기운';
+      } else if (state.arkPassive!.effects[i].description.contains('버스트')) {
+        nodeName = '버스트';
+      } else if (state.arkPassive!.effects[i].description.contains('만월의 집행자')) {
+        nodeName = '만월의 집행자';
+      } else if (state.arkPassive!.effects[i].description.contains('그믐의 경계')) {
+        nodeName = '그믐의 경계';
+      } else if (state.arkPassive!.effects[i].description.contains('질풍노도')) {
+        nodeName = '질풍노도';
+      } else if (state.arkPassive!.effects[i].description.contains('이슬비')) {
+        nodeName = '이슬비';
+      } else if (state.arkPassive!.effects[i].description.contains('만개')) {
+        nodeName = '만개';
+      } else if (state.arkPassive!.effects[i].description.contains('회귀')) {
+        nodeName = '회귀';
+      } else if (state.arkPassive!.effects[i].description.contains('야성')) {
+        nodeName = '야성';
+      } else if (state.arkPassive!.effects[i].description.contains('환수 각성')) {
+        nodeName = '환수 각성';
       }
     }
     return nodeName;
   }
+
   Color getQualityColor(int quality) {
     if (quality < 9) {
       return Colors.grey;
@@ -317,7 +419,7 @@ class ProfileController extends StateNotifier<ProfileState> {
 
     // SharedPreferences 에 저장된 닉네임 리스트 불러오기
     final recent = pref.getStringList('recent_search') ?? [];
-    state = ProfileState(recentSearchNickname:  recent);
+    state = ProfileState(recentSearchNickname: recent);
   }
 
   String extractText(String rawHtml) {
