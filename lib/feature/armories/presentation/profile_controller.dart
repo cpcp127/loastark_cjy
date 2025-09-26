@@ -62,7 +62,9 @@ class ProfileController extends StateNotifier<ProfileState> {
           await pref.setStringList('recent_search', updatedList);
           await getRecentSearchNickname();
           await getEquipment(nickName);
+          await getArkPassive(nickName);
           state = state.copyWith(profile: value);
+
         })
         .whenComplete(() {
           state = state.copyWith(profileLoading: false);
@@ -260,13 +262,33 @@ class ProfileController extends StateNotifier<ProfileState> {
     }
     return 0;
   }
+  String? extractTier4NodeName() {
+    String? nodeName;
+    for(int i=0;i<state.arkPassive!.effects.length;i++){
+      if(state.arkPassive!.effects[i].description.contains('깨달음') &&state.arkPassive!.effects[i].description.contains('4티어') ){
 
+        // 1) HTML 태그 제거
+        final plain = html_parser.parse(state.arkPassive!.effects[i].description).documentElement?.text;
+        // plain 예시: "깨달음 4티어 극한의 몸놀림 Lv.3"
+
+        // 2) "4티어" 뒤쪽 텍스트만 잘라내기
+        final parts = plain!.split("4티어");
+        if (parts.length < 2) return null;
+
+        nodeName = parts[1].trim(); // "극한의 몸놀림 Lv.3"
+
+        // 3) "Lv.xxx" 제거
+        nodeName = nodeName.replaceAll(RegExp(r"Lv\.\d+"), "").trim();
+      }
+    }
+    return nodeName;
+  }
   Color getQualityColor(int quality) {
-    if (quality <= 9) {
+    if (quality < 9) {
       return Colors.grey;
-    } else if (quality <= 29) {
+    } else if (quality < 29) {
       return Colors.green;
-    } else if (quality <= 69) {
+    } else if (quality < 69) {
       return Colors.blue;
     } else if (quality <= 99) {
       return Colors.purple;

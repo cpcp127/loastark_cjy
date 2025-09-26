@@ -1,6 +1,7 @@
 import 'package:cjylostark/feature/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'service/shared_preferences_service.dart';
 
@@ -15,17 +16,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProviderScope(
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          scaffoldBackgroundColor: Colors.white,
-          appBarTheme: AppBarTheme(
-            color: Colors.white,
-            scrolledUnderElevation: 0,
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: false,
+      splitScreenMode: false,
+
+      child: ProviderScope(
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            scaffoldBackgroundColor: Colors.white,
+            hoverColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            appBarTheme: AppBarTheme(
+              color: Colors.white,
+              scrolledUnderElevation: 0,
+            ),
           ),
+          home: HomeView(),
         ),
-        home: HomeView(),
       ),
     );
   }

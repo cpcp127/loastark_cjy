@@ -1,3 +1,5 @@
+import 'package:cjylostark/constants/app_colors.dart';
+import 'package:cjylostark/constants/app_text_style.dart';
 import 'package:cjylostark/custom_widget/custom_loading_widget.dart';
 import 'package:cjylostark/custom_widget/grade_container.dart';
 import 'package:cjylostark/custom_widget/quality_progressbar.dart';
@@ -49,64 +51,91 @@ class _ProfileView extends ConsumerState<ProfileView> {
     );
   }
 
-  Column buildSearchProfileView() {
+  Widget buildSearchProfileView() {
     final controller = ref.read(profileControllerProvider.notifier);
     final state = ref.watch(profileControllerProvider);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Row(),
-
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: CustomSearchTextField(
-            controller: nickController,
-            onSearch: () async {
-              await controller.searchProfile(nickController.text.trim());
+    return GestureDetector(
+      onTap: (){
+        FocusScope.of(context).unfocus();
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(),
+          Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/thank_kong.gif'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: CustomSearchTextField(
+              controller: nickController,
+              onSearch: () async {
+                await controller.searchProfile(nickController.text.trim());
+              },
+            ),
+          ),
+          SizedBox(height: 24),
+          Text(
+            "최근 검색 닉네임",
+            style: AppTextStyle.titleSmallBoldStyle.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Builder(
+            builder: (context) {
+              if (state.recentSearchNickname == null ||
+                  state.recentSearchNickname!.isEmpty) {
+                return Container();
+              } else {
+                return Column(
+                  children: [
+                    for (int i = 0; i < state.recentSearchNickname!.length; i++)
+                      buildRecentContainer(i),
+                  ],
+                );
+              }
             },
           ),
+        ],
+      ),
+    );
+  }
+
+  Padding buildRecentContainer(int i) {
+    final controller = ref.read(profileControllerProvider.notifier);
+    final state = ref.watch(profileControllerProvider);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: GestureDetector(
+        onTap: () {
+          controller.searchProfile(state.recentSearchNickname![i]);
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.green10,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Text(
+              state.recentSearchNickname![i],
+              style: AppTextStyle.bodyMediumStyle.copyWith(
+                color: AppColors.green400,
+              ),
+            ),
+          ),
         ),
-        SizedBox(height: 20),
-        Text('최근 검색 닉네임'),
-        Builder(
-          builder: (context) {
-            if (state.recentSearchNickname == null ||
-                state.recentSearchNickname!.isEmpty) {
-              return Container();
-            } else {
-              return Column(
-                children: [
-                  for (int i = 0; i < state.recentSearchNickname!.length; i++)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: GestureDetector(
-                        onTap: () {
-                          controller.searchProfile(
-                            state.recentSearchNickname![i],
-                          );
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.green,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 10,
-                            ),
-                            child: Text(state.recentSearchNickname![i]),
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              );
-            }
-          },
-        ),
-      ],
+      ),
     );
   }
 
@@ -136,10 +165,16 @@ class _ProfileView extends ConsumerState<ProfileView> {
                     padding: EdgeInsets.only(
                       right: profile!.title == null ? 0 : 20,
                     ),
-                    child: Text(profile.title ?? ''),
+                    child: Text(
+                      profile.title ?? '',
+                      style: AppTextStyle.headlineSmallBoldStyle,
+                    ),
                   ),
 
-                  Text(profile.characterName),
+                  Text(
+                    profile.characterName,
+                    style: AppTextStyle.headlineSmallBoldStyle,
+                  ),
                 ],
               ),
 
@@ -159,12 +194,89 @@ class _ProfileView extends ConsumerState<ProfileView> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(profile.serverName),
-                      Text(profile.characterClassName),
-                      Text(profile.itemAvgLevel),
+                      Row(
+                        children: [
+                          Container(
+                            height: 21,
+                            width: 45,
+                            child: Text(
+                              '서버 :',
+                              style: AppTextStyle.bodyMediumStyle,
+                            ),
+                          ),
+                          Text(
+                            profile.serverName,
+                            style: AppTextStyle.bodyMediumStyle,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            height: 21,
+                            width: 45,
+                            child: Text(
+                              '클래스 :',
+                              style: AppTextStyle.bodyMediumStyle,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                profile.characterClassName,
+                                style: AppTextStyle.bodyMediumStyle,
+                              ),
+                              controller.extractTier4NodeName() == null
+                                  ? Container()
+                                  : Text(
+                                      ' - ',
+                                      style: AppTextStyle.bodyMediumStyle,
+                                    ),
+                              controller.extractTier4NodeName() == null
+                                  ? Container()
+                                  : Text(
+                                      controller.extractTier4NodeName()!,
+                                      style: AppTextStyle.bodyMediumStyle,
+                                    ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            height: 21,
+                            width: 45,
+                            child: Text(
+                              '아이템 :',
+                              style: AppTextStyle.bodyMediumStyle,
+                            ),
+                          ),
+                          Text(
+                            profile.itemAvgLevel,
+                            style: AppTextStyle.bodyMediumStyle,
+                          ),
+                        ],
+                      ),
+
                       profile.combatPower == null
                           ? Container()
-                          : Text(profile.combatPower!),
+                          : Row(
+                              children: [
+                                Container(
+                                  height: 21,
+                                  width: 45,
+                                  child: Text(
+                                    '전투력 :',
+                                    style: AppTextStyle.bodyMediumStyle,
+                                  ),
+                                ),
+                                Text(
+                                  profile.combatPower.toString(),
+                                  style: AppTextStyle.bodyMediumStyle,
+                                ),
+                              ],
+                            ),
                     ],
                   ),
                 ],

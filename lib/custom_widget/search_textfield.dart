@@ -1,3 +1,5 @@
+import 'package:cjylostark/constants/app_colors.dart';
+import 'package:cjylostark/constants/app_text_style.dart';
 import 'package:flutter/material.dart';
 
 class CustomSearchTextField extends StatefulWidget {
@@ -33,23 +35,27 @@ class _CustomSearchTextFieldState extends State<CustomSearchTextField> {
         },
         decoration: InputDecoration(
           hintText: widget.hintText ?? '닉네임을 입력해주세요',
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(
-              color: Colors.black,
-              width: 1.5,
-            ),
+          hintStyle: AppTextStyle.bodyMediumStyle.copyWith(
+            color: AppColors.textSecondary,
           ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 14,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: AppColors.bgSecondary, width: 2),
+          ),
+
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(
-              color: Colors.black,
+              color: AppColors.bgSecondary,
               width: 2,
             ),
           ),
           suffixIcon: IconButton(
-            icon: const Icon(Icons.search, color: Colors.black),
+            icon:  Icon(Icons.search, color: AppColors.sky900),
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 widget.onSearch?.call();
