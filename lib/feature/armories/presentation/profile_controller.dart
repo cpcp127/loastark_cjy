@@ -518,4 +518,57 @@ class ProfileController extends StateNotifier<ProfileState> {
       return null;
     }
   }
+
+  Color getGradeColor(String grade){
+    if(grade=='고대'){
+      return const Color(0xFFE3C78A);
+    }else if(grade=='유물'){
+      return Color(0xFFA03F06);
+    }else if(grade=='전설'){
+      return Color(0xFF9C5E04);
+    }else if(grade=='영웅'){
+      return Color(0xFF470D5C);
+    }else if(grade=='에스더'){
+      return Color(0xFF2B9E9B);
+    }else{
+      return Color(0xFF113D5C);
+    }
+  }
+
+  String extractEnhanceLevel(String name) {
+    final match = RegExp(r'^\+\d+').firstMatch(name);
+    return match != null ? match.group(0)! : '';
+  }
+
+//엘릭서
+  String elixir(String rawHtml) {
+    // 1. HTML 태그 제거
+    String text = rawHtml.replaceAll(RegExp(r"<[^>]*>"), "");
+
+    // 2. [공용], [투구] 같은 괄호 제거
+    text = text.replaceAll(RegExp(r"\[.*?\]"), "").trim();
+
+    // 3. 줄바꿈, 공백 정리
+    text = text.replaceAll("\n", " ").replaceAll("\r", " ").trim();
+
+    // 4. 정규식으로 "이름 + Lv.x" 부분만 추출
+    final match = RegExp(r"([가-힣A-Za-z ()]+)\s*Lv\.\d+").firstMatch(text);
+
+    if (match != null) {
+      return match.group(0) ?? ""; // "민첩 Lv.5"
+    }
+
+    return "";
+  }
+
+//초월 추출
+  String? transcendence(String html) {
+    final regex = RegExp(r'(\d+)$'); // 문자열 끝에 있는 숫자
+    final match = regex.firstMatch(html);
+
+    String? result = match?.group(1); // "21"
+
+    return result;
+  }
+
 }

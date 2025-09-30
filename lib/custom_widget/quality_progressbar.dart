@@ -16,7 +16,7 @@ class QualityProgressbar extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         SizedBox(
-          width: 60,
+          width: 54,
           height: 10,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8),

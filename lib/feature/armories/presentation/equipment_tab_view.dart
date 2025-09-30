@@ -1,3 +1,4 @@
+import 'package:cjylostark/constants/app_text_style.dart';
 import 'package:cjylostark/custom_widget/custom_loading_widget.dart';
 import 'package:cjylostark/custom_widget/grade_container.dart';
 import 'package:cjylostark/custom_widget/quality_progressbar.dart';
@@ -22,205 +23,274 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
   Widget build(BuildContext context) {
     final controller = ref.read(profileControllerProvider.notifier);
     final state = ref.watch(profileControllerProvider);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text('장비'),
-        //무기
-        state.weapon == null
-            ? Container()
-            : Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      print(state.weapon);
-                    },
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        GradeContainer(
-                          icon: state.weapon!.icon,
-                          grade: state.weapon!.grade,
-                        ),
-                        //품질 프로그레스바
-                        QualityProgressbar(
-                          qualityValue: state
-                              .weapon!
-                              .tooltip!
-                              .element001!
-                              .value['qualityValue'],
-                          progressColor: controller.getQualityColor(
-                            state
-                                .weapon!
-                                .tooltip!
-                                .element001!
-                                .value['qualityValue'],
-                          ),
-                        ),
-                      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+              '장비',
+              style: AppTextStyle.headlineMediumBoldStyle.copyWith(
+                color: Colors.white,
+              ),
+            ),
+          ),
+
+          //무기
+          state.weapon == null
+              ? buildEmptyEquipment()
+              : Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.black,
                     ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(state.weapon!.grade),
-                          Text(extractEnhanceLevel(state.weapon!.name)),
-                        ],
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
                       ),
-                      //상급재련
-                      state.weapon!.tooltip!.element005!.value
-                              .toString()
-                              .contains('상급 재련')
-                          ? Text(
-                              '상급 재련 ${controller.getAdvancedRefiningLevel(state.weapon!.tooltip!.element005!.value as String).toString()}단계',
-                            )
-                          : Container(),
-                      //초월
-                      Row(
+                      child: Row(
                         children: [
-                          Container(
-                            width: 14,
-                            height: 14,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(
-                                  'assets/images/ico_tooltip_transcendence.png',
-                                ),
-                                fit: BoxFit.cover,
+                          Stack(
+                            alignment: Alignment.bottomCenter,
+                            children: [
+                              GradeContainer(
+                                icon: state.weapon!.icon,
+                                grade: state.weapon!.grade,
                               ),
-                            ),
-                          ),
-                          (state
-                                          .weapon!
-                                          .tooltip!
-                                          .element009
-                                          ?.value?['Element_000']?['topStr'] !=
-                                      null &&
-                                  !state
+                              //품질 프로그레스바
+                              QualityProgressbar(
+                                qualityValue: state
+                                    .weapon!
+                                    .tooltip!
+                                    .element001!
+                                    .value['qualityValue'],
+                                progressColor: controller.getQualityColor(
+                                  state
                                       .weapon!
                                       .tooltip!
-                                      .element009!
-                                      .value['Element_000']['topStr']
+                                      .element001!
+                                      .value['qualityValue'],
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    state.weapon!.grade,
+                                    style: AppTextStyle.labelMediumStyle
+                                        .copyWith(
+                                          color: controller.getGradeColor(
+                                            state.weapon!.grade,
+                                          ),
+                                        ),
+                                  ),
+                                  SizedBox(width: 3),
+                                  Text(
+                                    extractEnhanceLevel(state.weapon!.name),
+                                    style: AppTextStyle.labelMediumStyle
+                                        .copyWith(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                              //상급재련
+                              state.weapon!.tooltip!.element005!.value
                                       .toString()
-                                      .contains("에스더"))
-                              ? Text(
-                                  transcendence(
-                                        state
-                                            .weapon!
-                                            .tooltip!
-                                            .element009!
-                                            .value['Element_000']['topStr'],
-                                      ) ??
-                                      "",
-                                )
-                              : (state
-                                        .weapon!
-                                        .tooltip!
-                                        .element010
-                                        ?.value?['Element_000']?['topStr'] !=
-                                    null)
-                              ? Text(
-                                  transcendence(
-                                        state
-                                            .weapon!
-                                            .tooltip!
-                                            .element010!
-                                            .value['Element_000']['topStr'],
-                                      ) ??
-                                      "",
-                                )
-                              : Container(),
+                                      .contains('상급 재련')
+                                  ? Text(
+                                      '상급 재련 ${controller.getAdvancedRefiningLevel(state.weapon!.tooltip!.element005!.value as String).toString()}단계',
+                                      style: AppTextStyle.labelMediumStyle
+                                          .copyWith(color: Colors.white),
+                                    )
+                                  : Container(),
+                              //초월
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 14,
+                                    height: 14,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                          'assets/images/ico_tooltip_transcendence.png',
+                                        ),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  (state
+                                                  .weapon!
+                                                  .tooltip!
+                                                  .element009
+                                                  ?.value?['Element_000']?['topStr'] !=
+                                              null &&
+                                          !state
+                                              .weapon!
+                                              .tooltip!
+                                              .element009!
+                                              .value['Element_000']['topStr']
+                                              .toString()
+                                              .contains("에스더"))
+                                      ? Text(
+                                          controller.transcendence(
+                                                state
+                                                    .weapon!
+                                                    .tooltip!
+                                                    .element009!
+                                                    .value['Element_000']['topStr'],
+                                              ) ??
+                                              "",
+                                          style: AppTextStyle.labelMediumStyle
+                                              .copyWith(color: Colors.white),
+                                        )
+                                      : (state
+                                                .weapon!
+                                                .tooltip!
+                                                .element010
+                                                ?.value?['Element_000']?['topStr'] !=
+                                            null)
+                                      ? Text(
+                                          controller.transcendence(
+                                                state
+                                                    .weapon!
+                                                    .tooltip!
+                                                    .element010!
+                                                    .value['Element_000']['topStr'],
+                                              ) ??
+                                              "",
+                                          style: AppTextStyle.labelMediumStyle
+                                              .copyWith(color: Colors.white),
+                                        )
+                                      : Container(),
+                                ],
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                    ],
-                  ),
-                ],
-              ),
-        state.helmet == null
-            ? Container()
-            : buildEquipmentItem(state, controller, state.helmet!),
-        state.shoulder == null
-            ? Container()
-            : buildEquipmentItem(state, controller, state.shoulder!),
-        state.armor == null
-            ? Container()
-            : buildEquipmentItem(state, controller, state.armor!),
-        state.pants == null
-            ? Container()
-            : buildEquipmentItem(state, controller, state.pants!),
-        state.glove == null
-            ? Container()
-            : buildEquipmentItem(state, controller, state.glove!),
-        Text('악세'),
-        state.necklace == null
-            ? buildEmptyEquipment()
-            : buildAccessories(state, controller, state.necklace!),
-        state.earRings == null
-            ? Column(children: [buildEmptyEquipment(), buildEmptyEquipment()])
-            : state.earRings!.length == 1
-            ? Column(
-                children: [
-                  buildAccessories(state, controller, state.earRings!.first),
-                  buildEmptyEquipment(),
-                ],
-              )
-            : Column(
-                children: [
-                  for (int i = 0; i < state.earRings!.length; i++)
-                    buildAccessories(state, controller, state.earRings![i]),
-                ],
-              ),
-        state.rings == null
-            ? Column(children: [buildEmptyEquipment(), buildEmptyEquipment()])
-            : state.rings!.length == 1
-            ? Column(
-                children: [
-                  buildAccessories(state, controller, state.rings!.first),
-                  buildEmptyEquipment(),
-                ],
-              )
-            : Column(
-                children: [
-                  for (int i = 0; i < state.rings!.length; i++)
-                    buildAccessories(state, controller, state.rings![i]),
-                ],
-              ),
-        //팔찌
-        state.bracelet == null ? buildEmptyEquipment() : buildBracelet(state),
-        state.stone == null
-            ? buildEmptyEquipment()
-            : Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      print(state.stone!);
-                    },
-                    child: GradeContainer(
-                      icon: state.stone!.icon,
-                      grade: state.stone!.grade,
                     ),
                   ),
-                  Column(
-                    children: [
-                      for (int i = 0; i < 3; i++)
-                        TooltipText(
-                          state
-                              .stone!
-                              .tooltip!
-                              .element007!
-                              .value['Element_000']['contentStr']['Element_00$i']['contentStr']
-                              .toString()
-                              .replaceAll("[", "")
-                              .replaceAll("]", "")
-                              .replaceAll(RegExp(r"<br>|<BR>"), ""),
-                        ),
-                    ],
-                  ),
+                ),
+          state.helmet == null
+              ? Container()
+              : buildEquipmentItem(state, controller, state.helmet!),
+          state.shoulder == null
+              ? Container()
+              : buildEquipmentItem(state, controller, state.shoulder!),
+          state.armor == null
+              ? Container()
+              : buildEquipmentItem(state, controller, state.armor!),
+          state.pants == null
+              ? Container()
+              : buildEquipmentItem(state, controller, state.pants!),
+          state.glove == null
+              ? Container()
+              : buildEquipmentItem(state, controller, state.glove!),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              '액세서리',
+              style: AppTextStyle.headlineMediumBoldStyle.copyWith(
+                color: Colors.white,
+              ),
+            ),
+          ),
+          state.necklace == null
+              ? buildEmptyEquipment()
+              : buildAccessories(state, controller, state.necklace!),
+          state.earRings == null
+              ? Column(children: [buildEmptyEquipment(), buildEmptyEquipment()])
+              : state.earRings!.length == 1
+              ? Column(
+                  children: [
+                    buildAccessories(state, controller, state.earRings!.first),
+                    buildEmptyEquipment(),
+                  ],
+                )
+              : Column(
+                  children: [
+                    for (int i = 0; i < state.earRings!.length; i++)
+                      buildAccessories(state, controller, state.earRings![i]),
+                  ],
+                ),
+          state.rings == null
+              ? Column(children: [buildEmptyEquipment(), buildEmptyEquipment()])
+              : state.rings!.length == 1
+              ? Column(
+                  children: [
+                    buildAccessories(state, controller, state.rings!.first),
+                    buildEmptyEquipment(),
+                  ],
+                )
+              : Column(
+                  children: [
+                    for (int i = 0; i < state.rings!.length; i++)
+                      buildAccessories(state, controller, state.rings![i]),
+                  ],
+                ),
+          //팔찌
+          state.bracelet == null ? buildEmptyEquipment() : buildBracelet(state),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              '어빌리티 스톤',
+              style: AppTextStyle.headlineMediumBoldStyle.copyWith(
+                color: Colors.white,
+              ),
+            ),
+          ),
+          state.stone == null ? buildEmptyEquipment() : buildStone(state),
+        ],
+      ),
+    );
+  }
+
+  Padding buildStone(ProfileState state) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.black,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Row(
+            children: [
+              GradeContainer(
+                icon: state.stone!.icon,
+                grade: state.stone!.grade,
+              ),
+              SizedBox(width: 8),
+              Column(
+                children: [
+                  for (int i = 0; i < 3; i++)
+                    TooltipText(
+                      state
+                          .stone!
+                          .tooltip!
+                          .element007!
+                          .value['Element_000']['contentStr']['Element_00$i']['contentStr']
+                          .toString()
+                          .replaceAll("[", "")
+                          .replaceAll("]", "")
+                          .replaceAll(RegExp(r"<br>|<BR>"), ""),
+                    ),
                 ],
               ),
-      ],
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -229,101 +299,135 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
     return match != null ? match.group(0)! : '';
   }
 
-  Row buildEquipmentItem(
+  Widget buildEquipmentItem(
     ProfileState state,
     ProfileController controller,
     CharacterEquipment item,
   ) {
-    return Row(
-      children: [
-        Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            GestureDetector(
-              onTap: () {
-                print(item);
-              },
-              child: GradeContainer(icon: item.icon, grade: item.grade),
-            ),
-            //품질 프로그레스바
-            QualityProgressbar(
-              qualityValue: item.tooltip!.element001!.value['qualityValue'],
-              progressColor: controller.getQualityColor(
-                item.tooltip!.element001!.value['qualityValue'],
-              ),
-            ),
-          ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.black,
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(item.grade),
-                Text(extractEnhanceLevel(item.name)),
-              ],
-            ),
-            //상급재련
-            item.tooltip!.element005!.value.toString().contains('상급 재련')
-                ? Text(
-                    '상급 재련 ${controller.getAdvancedRefiningLevel(item.tooltip!.element005!.value as String).toString()}단계',
-                  )
-                : Container(),
-            //초월
-            Row(
-              children: [
-                Container(
-                  width: 14,
-                  height: 14,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(
-                        'assets/images/ico_tooltip_transcendence.png',
-                      ),
-                      fit: BoxFit.cover,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Row(
+            children: [
+              Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  GradeContainer(icon: item.icon, grade: item.grade),
+                  //품질 프로그레스바
+                  QualityProgressbar(
+                    qualityValue:
+                        item.tooltip!.element001!.value['qualityValue'],
+                    progressColor: controller.getQualityColor(
+                      item.tooltip!.element001!.value['qualityValue'],
                     ),
                   ),
-                ),
-                // element009 먼저 확인
-                item.tooltip?.element009?.value?['Element_000']?['topStr']
-                            ?.toString()
-                            .contains('초월') ==
-                        true
-                    ? Text(
-                        transcendence(
-                              item
-                                  .tooltip!
-                                  .element009!
-                                  .value['Element_000']['topStr'],
-                            ) ??
-                            "",
-                      )
-                    // 없으면 element010 확인
-                    : item.tooltip?.element010?.value?['Element_000']?['topStr']
-                              ?.toString()
-                              .contains('초월') ==
-                          true
-                    ? Text(
-                        transcendence(
-                              item
-                                  .tooltip!
-                                  .element010!
-                                  .value['Element_000']['topStr'],
-                            ) ??
-                            "",
-                      )
-                    : Container(),
-              ],
-            ),
-          ],
+                ],
+              ),
+              SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        item.grade,
+                        style: AppTextStyle.labelMediumStyle.copyWith(
+                          color: controller.getGradeColor(item.grade),
+                        ),
+                      ),
+                      SizedBox(width: 3),
+                      Text(
+                        extractEnhanceLevel(item.name),
+                        style: AppTextStyle.labelMediumStyle.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  //상급재련
+                  item.tooltip!.element005!.value.toString().contains('상급 재련')
+                      ? Text(
+                          '상급 재련 ${controller.getAdvancedRefiningLevel(item.tooltip!.element005!.value as String).toString()}단계',
+                          style: AppTextStyle.labelMediumStyle.copyWith(
+                            color: Colors.white,
+                          ),
+                        )
+                      : Container(),
+                  //초월
+                  Row(
+                    children: [
+                      Container(
+                        width: 14,
+                        height: 14,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(
+                              'assets/images/ico_tooltip_transcendence.png',
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      // element009 먼저 확인
+                      item.tooltip?.element009?.value?['Element_000']?['topStr']
+                                  ?.toString()
+                                  .contains('초월') ==
+                              true
+                          ? Text(
+                              controller.transcendence(
+                                    item
+                                        .tooltip!
+                                        .element009!
+                                        .value['Element_000']['topStr'],
+                                  ) ??
+                                  "",
+                              style: AppTextStyle.labelMediumStyle.copyWith(
+                                color: Colors.white,
+                              ),
+                            )
+                          // 없으면 element010 확인
+                          : item
+                                    .tooltip
+                                    ?.element010
+                                    ?.value?['Element_000']?['topStr']
+                                    ?.toString()
+                                    .contains('초월') ==
+                                true
+                          ? Text(
+                              controller.transcendence(
+                                    item
+                                        .tooltip!
+                                        .element010!
+                                        .value['Element_000']['topStr'],
+                                  ) ??
+                                  "",
+                              style: AppTextStyle.labelMediumStyle.copyWith(
+                                color: Colors.white,
+                              ),
+                            )
+                          : Container(),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(width: 10),
+              //엘릭서
+              buildElixir(item),
+            ],
+          ),
         ),
-        //엘릭서
-        buildElixir(item),
-      ],
+      ),
     );
   }
 
   Widget buildElixir(CharacterEquipment item) {
+    final controller = ref.read(profileControllerProvider.notifier);
     final element010Value = item.tooltip?.element010?.value;
     final element011Value = item.tooltip?.element011?.value;
 
@@ -353,57 +457,78 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
       children: [
         elixirItemElements.isNotEmpty
             ? TooltipText(
-                elixir(elixirItemElements['Element_000']['contentStr']),
+                controller.elixir(
+                  elixirItemElements['Element_000']['contentStr'],
+                ),
               )
             : Container(),
         elixirItemElements.length >= 2
             ? TooltipText(
-                elixir(elixirItemElements['Element_001']['contentStr']),
+                controller.elixir(
+                  elixirItemElements['Element_001']['contentStr'],
+                ),
               )
             : Container(),
       ],
     );
   }
 
-  Row buildAccessories(
+  Widget buildAccessories(
     ProfileState state,
     ProfileController controller,
     CharacterEquipment item,
   ) {
-    return Row(
-      children: [
-        Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            GestureDetector(
-              onTap: () {
-                print(item.tooltip!.element004!.value);
-              },
-              child: GradeContainer(icon: item.icon, grade: item.grade),
-            ),
-            //품질 프로그레스바
-            QualityProgressbar(
-              qualityValue: item.tooltip!.element001!.value['qualityValue'],
-              progressColor: controller.getQualityColor(
-                item.tooltip!.element001!.value['qualityValue'],
-              ),
-            ),
-          ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.black,
         ),
-        Text(item.grade),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Row(
             children: [
-              TooltipText(item.tooltip!.element006!.value['Element_001']),
-
+              Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  GradeContainer(icon: item.icon, grade: item.grade),
+                  //품질 프로그레스바
+                  QualityProgressbar(
+                    qualityValue:
+                        item.tooltip!.element001!.value['qualityValue'],
+                    progressColor: controller.getQualityColor(
+                      item.tooltip!.element001!.value['qualityValue'],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(width: 8),
+              Text(
+                item.grade,
+                style: AppTextStyle.labelMediumStyle.copyWith(
+                  color: controller.getGradeColor(item.grade),
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TooltipText(item.tooltip!.element006!.value['Element_001']),
+                  ],
+                ),
+              ),
+              Text(
+                '힘/민/지 ${controller.getAccessoriesPercent(item.type, controller.extractStrengthValue(item.tooltip!.element004!.value.toString()))} ',
+                style: AppTextStyle.labelMediumStyle.copyWith(
+                  color: Colors.white,
+                ),
+              ),
             ],
           ),
         ),
-        Text(
-          '힘/민/지 ${controller.getAccessoriesPercent(item.type, controller.extractStrengthValue(item.tooltip!.element004!.value.toString()))} ',
-        ),
-      ],
+      ),
     );
   }
 
@@ -413,35 +538,47 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
       height: 60,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color: Colors.black,
+        color: Colors.grey.withOpacity(0.8),
       ),
     );
   }
 
-  Row buildBracelet(ProfileState state) {
-    return Row(
-      children: [
-        Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            GestureDetector(
-              onTap: () {
-                print(state.bracelet);
-              },
-              child: GradeContainer(
-                icon: state.bracelet!.icon,
-                grade: state.bracelet!.grade,
-              ),
-            ),
-          ],
+  Widget buildBracelet(ProfileState state) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.black,
         ),
-        Text(state.bracelet!.grade),
-        Expanded(
-          child: TooltipText(
-            state.bracelet!.tooltip!.element005!.value['Element_001'],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Row(
+            children: [
+              Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      print(state.bracelet);
+                    },
+                    child: GradeContainer(
+                      icon: state.bracelet!.icon,
+                      grade: state.bracelet!.grade,
+                    ),
+                  ),
+                ],
+              ),
+              Text(state.bracelet!.grade),
+              Expanded(
+                child: TooltipText(
+                  state.bracelet!.tooltip!.element005!.value['Element_001'],
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

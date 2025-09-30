@@ -5,6 +5,7 @@ import 'package:cjylostark/custom_widget/grade_container.dart';
 import 'package:cjylostark/custom_widget/quality_progressbar.dart';
 import 'package:cjylostark/custom_widget/search_textfield.dart';
 import 'package:cjylostark/feature/armories/domain/character_equipment.dart';
+import 'package:cjylostark/feature/armories/domain/character_profile.dart';
 import 'package:cjylostark/feature/armories/presentation/ark_grid_tab_view.dart';
 import 'package:cjylostark/feature/armories/presentation/ark_passive_tab_view.dart';
 import 'package:cjylostark/feature/armories/presentation/engravings_tab_view.dart';
@@ -55,7 +56,7 @@ class _ProfileView extends ConsumerState<ProfileView> {
     final controller = ref.read(profileControllerProvider.notifier);
     final state = ref.watch(profileControllerProvider);
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusScope.of(context).unfocus();
       },
       child: Column(
@@ -147,9 +148,12 @@ class _ProfileView extends ConsumerState<ProfileView> {
     return DefaultTabController(
       length: 5,
       child: Scaffold(
+        backgroundColor: AppColors.backGround,
         appBar: AppBar(
+          backgroundColor:AppColors.backGround,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back,color: Colors.white,),
+
             onPressed: () {
               controller.tabBackButton();
             },
@@ -158,151 +162,23 @@ class _ProfileView extends ConsumerState<ProfileView> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(
-                      right: profile!.title == null ? 0 : 20,
-                    ),
-                    child: Text(
-                      profile.title ?? '',
-                      style: AppTextStyle.headlineSmallBoldStyle,
-                    ),
-                  ),
-
-                  Text(
-                    profile.characterName,
-                    style: AppTextStyle.headlineSmallBoldStyle,
-                  ),
-                ],
-              ),
-
-              Row(
-                children: [
-                  Container(
-                    width: 100,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(profile.characterImage!),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              Container(
+                color: AppColors.backGround,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                            height: 21,
-                            width: 45,
-                            child: Text(
-                              '서버 :',
-                              style: AppTextStyle.bodyMediumStyle,
-                            ),
-                          ),
-                          Text(
-                            profile.serverName,
-                            style: AppTextStyle.bodyMediumStyle,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                            height: 21,
-                            width: 45,
-                            child: Text(
-                              '클래스 :',
-                              style: AppTextStyle.bodyMediumStyle,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                profile.characterClassName,
-                                style: AppTextStyle.bodyMediumStyle,
-                              ),
-                              controller.extractTier4NodeName() == null
-                                  ? Container()
-                                  : Text(
-                                      ' - ',
-                                      style: AppTextStyle.bodyMediumStyle,
-                                    ),
-                              controller.extractTier4NodeName() == null
-                                  ? Container()
-                                  : Text(
-                                      controller.extractTier4NodeName()!,
-                                      style: AppTextStyle.bodyMediumStyle,
-                                    ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                            height: 21,
-                            width: 45,
-                            child: Text(
-                              '아이템 :',
-                              style: AppTextStyle.bodyMediumStyle,
-                            ),
-                          ),
-                          Text(
-                            profile.itemAvgLevel,
-                            style: AppTextStyle.bodyMediumStyle,
-                          ),
-                        ],
-                      ),
+                      buildCharacterNameRow(profile),
 
-                      profile.combatPower == null
-                          ? Container()
-                          : Row(
-                              children: [
-                                Container(
-                                  height: 21,
-                                  width: 45,
-                                  child: Text(
-                                    '전투력 :',
-                                    style: AppTextStyle.bodyMediumStyle,
-                                  ),
-                                ),
-                                Text(
-                                  profile.combatPower.toString(),
-                                  style: AppTextStyle.bodyMediumStyle,
-                                ),
-                              ],
-                            ),
+                      buildProfileRow(profile, controller),
                     ],
                   ),
-                ],
+                ),
               ),
+
               SizedBox(height: 20),
 
-              TabBar(
-                padding: EdgeInsets.zero,
-                // 👈 전체 좌우 여백 제거
-                tabAlignment: TabAlignment.start,
-                isScrollable: true,
-                indicatorPadding: EdgeInsets.zero,
-                // 👈 인디케이터 여백 제거
-                labelPadding: EdgeInsets.symmetric(horizontal: 16),
-                // 👈 탭 간 간격만 주기
-                onTap: (index) {
-                  controller.changeTabBarIndex(index, profile.characterName);
-                },
-                tabs: [
-                  Tab(text: '장비'),
-                  Tab(text: '보석'),
-                  Tab(text: '각인'),
-                  Tab(text: '아크패시브'),
-                  Tab(text: '아크그리드'),
-                ],
-              ),
+              buildTabBar(controller, profile),
               state.tabBarIndex == 0
                   ? EquipmentTabView()
                   : state.tabBarIndex == 1
@@ -319,14 +195,297 @@ class _ProfileView extends ConsumerState<ProfileView> {
     );
   }
 
-  Container buildEmptyEquipment() {
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.black,
-      ),
+  TabBar buildTabBar(ProfileController controller, CharacterProfile? profile) {
+    return TabBar(
+      labelColor: AppColors.green400,
+      unselectedLabelColor: AppColors.gray500,
+      indicatorColor: AppColors.green400,
+      dividerColor: AppColors.backGround,
+      padding: EdgeInsets.zero,
+      // 👈 전체 좌우 여백 제거
+      tabAlignment: TabAlignment.start,
+      isScrollable: true,
+      indicatorPadding: EdgeInsets.zero,
+      // 👈 인디케이터 여백 제거
+      labelPadding: EdgeInsets.symmetric(horizontal: 16),
+      // 👈 탭 간 간격만 주기
+      onTap: (index) {
+        controller.changeTabBarIndex(index, profile!.characterName);
+      },
+      tabs: [
+        Tab(text: '장비'),
+        Tab(text: '보석'),
+        Tab(text: '각인'),
+        Tab(text: '아크패시브'),
+        Tab(text: '아크그리드'),
+      ],
+    );
+  }
+
+  Row buildProfileRow(CharacterProfile? profile, ProfileController controller) {
+    return Row(
+      children: [
+        Container(
+          width: 100,
+          height: 200,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(profile!.characterImage!),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        SizedBox(width: 10),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  height: 21,
+                  width: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '서버',
+                      style: AppTextStyle.bodyMediumStyle.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  profile.serverName,
+                  style: AppTextStyle.bodyMediumStyle.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 6),
+            Row(
+              children: [
+                Container(
+                  height: 21,
+                  width: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '클래스',
+                      style: AppTextStyle.bodyMediumStyle.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Row(
+                  children: [
+                    Text(
+                      profile.characterClassName,
+                      style: AppTextStyle.bodyMediumStyle.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                    controller.extractTier4NodeName() == null
+                        ? Container()
+                        : Text(
+                            ' - ',
+                            style: AppTextStyle.bodyMediumStyle.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                    controller.extractTier4NodeName() == null
+                        ? Container()
+                        : Text(
+                            controller.extractTier4NodeName()!,
+                            style: AppTextStyle.bodyMediumStyle.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 6),
+            Row(
+              children: [
+                Container(
+                  height: 21,
+                  width: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '원대랩',
+                      style: AppTextStyle.bodyMediumStyle.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  profile.expeditionLevel.toString(),
+                  style: AppTextStyle.bodyMediumStyle.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 6),
+            Row(
+              children: [
+                Container(
+                  height: 21,
+                  width: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '아이템',
+                      style: AppTextStyle.bodyMediumStyle.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  profile.itemAvgLevel,
+                  style: AppTextStyle.bodyMediumStyle.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 6),
+            profile.combatPower == null
+                ? Container()
+                : Row(
+                    children: [
+                      Container(
+                        height: 21,
+                        width: 45,
+                        decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '전투력',
+                            style: AppTextStyle.bodyMediumStyle.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        profile.combatPower.toString(),
+                        style: AppTextStyle.bodyMediumStyle.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+            SizedBox(height: 6),
+            profile.guildName == null
+                ? Container()
+                : Row(
+                    children: [
+                      Container(
+                        height: 21,
+                        width: 45,
+                        decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '길드',
+                            style: AppTextStyle.bodyMediumStyle.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        profile.guildName.toString(),
+                        style: AppTextStyle.bodyMediumStyle.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+            SizedBox(height: 6),
+            Row(
+              children: [
+                Container(
+                  height: 21,
+                  width: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '영지',
+                      style: AppTextStyle.bodyMediumStyle.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  '${profile.townName} - LV ${profile.townLevel.toString()}',
+                  style: AppTextStyle.bodyMediumStyle.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Row buildCharacterNameRow(CharacterProfile? profile) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(right: profile!.title == null ? 0 : 20),
+          child: Text(
+            profile.title ?? '',
+            style: AppTextStyle.headlineSmallBoldStyle.copyWith(
+              color: Colors.white,
+            ),
+          ),
+        ),
+
+        Text(
+          profile.characterName,
+          style: AppTextStyle.headlineSmallBoldStyle.copyWith(
+            color: Colors.white,
+          ),
+        ),
+      ],
     );
   }
 
@@ -357,134 +516,8 @@ class _ProfileView extends ConsumerState<ProfileView> {
     );
   }
 
-  Row buildAccessories(
-    ProfileState state,
-    ProfileController controller,
-    CharacterEquipment item,
-  ) {
-    return Row(
-      children: [
-        Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            GestureDetector(
-              onTap: () {
-                print(item);
-              },
-              child: GradeContainer(icon: item.icon, grade: item.grade),
-            ),
-            //품질 프로그레스바
-            QualityProgressbar(
-              qualityValue: item.tooltip!.element001!.value['qualityValue'],
-              progressColor: controller.getQualityColor(
-                item.tooltip!.element001!.value['qualityValue'],
-              ),
-            ),
-          ],
-        ),
-        Text(item.grade),
-        Expanded(
-          child: TooltipText(item.tooltip!.element006!.value['Element_001']),
-        ),
-      ],
-    );
-  }
-
-  Row buildEquipmentItem(
-    ProfileState state,
-    ProfileController controller,
-    CharacterEquipment item,
-  ) {
-    return Row(
-      children: [
-        Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            GestureDetector(
-              onTap: () {
-                print(item);
-              },
-              child: GradeContainer(icon: item.icon, grade: item.grade),
-            ),
-            //품질 프로그레스바
-            QualityProgressbar(
-              qualityValue: item.tooltip!.element001!.value['qualityValue'],
-              progressColor: controller.getQualityColor(
-                item.tooltip!.element001!.value['qualityValue'],
-              ),
-            ),
-          ],
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(item.grade),
-                Text(extractEnhanceLevel(item.name)),
-              ],
-            ),
-            //상급재련
-            item.tooltip!.element005!.value.toString().contains('상급 재련')
-                ? Text(
-                    '상급 재련 ${controller.getAdvancedRefiningLevel(item.tooltip!.element005!.value as String).toString()}단계',
-                  )
-                : Container(),
-            //초월
-            Row(
-              children: [
-                Container(
-                  width: 14,
-                  height: 14,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(
-                        'assets/images/ico_tooltip_transcendence.png',
-                      ),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                // element009 먼저 확인
-                item.tooltip?.element009?.value?['Element_000']?['topStr']
-                            ?.toString()
-                            .contains('초월') ==
-                        true
-                    ? Text(
-                        transcendence(
-                              item
-                                  .tooltip!
-                                  .element009!
-                                  .value['Element_000']['topStr'],
-                            ) ??
-                            "",
-                      )
-                    // 없으면 element010 확인
-                    : item.tooltip?.element010?.value?['Element_000']?['topStr']
-                              ?.toString()
-                              .contains('초월') ==
-                          true
-                    ? Text(
-                        transcendence(
-                              item
-                                  .tooltip!
-                                  .element010!
-                                  .value['Element_000']['topStr'],
-                            ) ??
-                            "",
-                      )
-                    : Container(),
-              ],
-            ),
-          ],
-        ),
-        //엘릭서
-        buildElixir(item),
-      ],
-    );
-  }
-
   Widget buildElixir(CharacterEquipment item) {
+    final controller = ref.read(profileControllerProvider.notifier);
     final element010Value = item.tooltip?.element010?.value;
     final element011Value = item.tooltip?.element011?.value;
 
@@ -514,12 +547,16 @@ class _ProfileView extends ConsumerState<ProfileView> {
       children: [
         elixirItemElements.isNotEmpty
             ? TooltipText(
-                elixir(elixirItemElements['Element_000']['contentStr']),
+                controller.elixir(
+                  elixirItemElements['Element_000']['contentStr'],
+                ),
               )
             : Container(),
         elixirItemElements.length >= 2
             ? TooltipText(
-                elixir(elixirItemElements['Element_001']['contentStr']),
+                controller.elixir(
+                  elixirItemElements['Element_001']['contentStr'],
+                ),
               )
             : Container(),
       ],
@@ -532,42 +569,6 @@ class _ProfileView extends ConsumerState<ProfileView> {
     parms = ProfileParms(context: context, ref: ref);
     ref.read(profileControllerProvider.notifier).getRecentSearchNickname();
   }
-}
-
-String extractEnhanceLevel(String name) {
-  final match = RegExp(r'^\+\d+').firstMatch(name);
-  return match != null ? match.group(0)! : '';
-}
-
-//엘릭서
-String elixir(String rawHtml) {
-  // 1. HTML 태그 제거
-  String text = rawHtml.replaceAll(RegExp(r"<[^>]*>"), "");
-
-  // 2. [공용], [투구] 같은 괄호 제거
-  text = text.replaceAll(RegExp(r"\[.*?\]"), "").trim();
-
-  // 3. 줄바꿈, 공백 정리
-  text = text.replaceAll("\n", " ").replaceAll("\r", " ").trim();
-
-  // 4. 정규식으로 "이름 + Lv.x" 부분만 추출
-  final match = RegExp(r"([가-힣A-Za-z ()]+)\s*Lv\.\d+").firstMatch(text);
-
-  if (match != null) {
-    return match.group(0) ?? ""; // "민첩 Lv.5"
-  }
-
-  return "";
-}
-
-//초월 추출
-String? transcendence(String html) {
-  final regex = RegExp(r'(\d+)$'); // 문자열 끝에 있는 숫자
-  final match = regex.firstMatch(html);
-
-  String? result = match?.group(1); // "21"
-
-  return result;
 }
 
 class TooltipText extends StatelessWidget {
@@ -593,7 +594,7 @@ class TooltipText extends StatelessWidget {
         spans.add(
           TextSpan(
             text: node.text,
-            style: const TextStyle(color: Colors.black),
+            style: AppTextStyle.labelMediumStyle.copyWith(color: Colors.white),
           ),
         );
       } else if (node.nodeType == 1) {
@@ -605,23 +606,19 @@ class TooltipText extends StatelessWidget {
 
           case "font":
             final colorAttr = element.attributes['color'];
-            Color textColor = Colors.black;
+            Color textColor = Colors.white;
 
             if (colorAttr != null) {
               try {
                 final hex = colorAttr.replaceAll('#', '').toUpperCase();
-                if (hex == 'FFFFFF') {
-                  textColor = Colors.black;
-                } else {
-                  textColor = Color(int.parse("0xFF$hex"));
-                }
+                textColor = Color(int.parse("0xFF$hex"));
               } catch (_) {}
             }
 
             spans.addAll([
               TextSpan(
                 text: element.text,
-                style: TextStyle(color: textColor),
+                style: AppTextStyle.labelMediumStyle.copyWith(color: textColor),
               ),
             ]);
             break;
@@ -630,7 +627,9 @@ class TooltipText extends StatelessWidget {
             spans.add(
               TextSpan(
                 text: element.text,
-                style: const TextStyle(color: Colors.black),
+                style: AppTextStyle.labelMediumStyle.copyWith(
+                  color: Colors.white,
+                ),
               ),
             );
         }

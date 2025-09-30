@@ -21,9 +21,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: AppColors.backGround,
       child: SafeArea(
         child: Scaffold(
+          backgroundColor: AppColors.backGround,
           bottomNavigationBar: buildBottomNavigationBar(),
           body: IndexedStack(
             index: bottomIndex,
@@ -34,23 +35,30 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
-  BottomNavigationBar buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      currentIndex: bottomIndex,
-      elevation: 0,
-      enableFeedback: false,
-      backgroundColor: Colors.white,
-      selectedItemColor: AppColors.green400,
+  Widget buildBottomNavigationBar() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Divider(thickness: 1,color: AppColors.gray100),
+        BottomNavigationBar(
 
-      onTap: (index) {
-        setState(() {
-          bottomIndex = index;
-        });
-      },
-      items: [
-        BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: '프로필'),
-        BottomNavigationBarItem(icon: Icon(Icons.hardware), label: '스톤 세공'),
-        BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: '기타'),
+          currentIndex: bottomIndex,
+          elevation: 0,
+          enableFeedback: false,
+          backgroundColor: AppColors.backGround,
+          selectedItemColor: AppColors.green400,
+          unselectedItemColor: AppColors.gray400,
+          onTap: (index) {
+            setState(() {
+              bottomIndex = index;
+            });
+          },
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: '프로필'),
+            BottomNavigationBarItem(icon: Icon(Icons.hardware), label: '스톤 세공'),
+            BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: '기타'),
+          ],
+        ),
       ],
     );
   }

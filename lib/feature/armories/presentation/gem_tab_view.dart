@@ -1,3 +1,4 @@
+import 'package:cjylostark/constants/app_text_style.dart';
 import 'package:cjylostark/feature/armories/domain/gem_model.dart';
 import 'package:cjylostark/feature/armories/presentation/profile_controller.dart';
 import 'package:cjylostark/feature/armories/presentation/profile_state.dart';
@@ -17,18 +18,25 @@ class _GemTabViewState extends ConsumerState<GemTabView> {
   Widget build(BuildContext context) {
     final controller = ref.read(profileControllerProvider.notifier);
     final state = ref.watch(profileControllerProvider);
-    return Column(
-      children: [
-        Text(
-          '피해 증가 보석 : ${state.damageGemMap == null ? 0 : state.damageGemMap!.length}개',
-        ),
-        buildGemColumn(state, controller, state.damageGemMap),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        children: [
+          Text(
+            '피해 증가 보석 : ${state.damageGemMap == null ? 0 : state.damageGemMap!.length}개',
+            style: AppTextStyle.labelMediumStyle.copyWith(color: Colors.white),
+          ),
+          SizedBox(height: 6),
+          buildGemColumn(state, controller, state.damageGemMap),
 
-        Text(
-          '재사용 대기시간 감소 보석 : ${state.cooldownGemMap == null ? 0 : state.cooldownGemMap!.length}개',
-        ),
-        buildGemColumn(state, controller, state.cooldownGemMap),
-      ],
+          Text(
+            '재사용 대기시간 감소 보석 : ${state.cooldownGemMap == null ? 0 : state.cooldownGemMap!.length}개',
+            style: AppTextStyle.labelMediumStyle.copyWith(color: Colors.white),
+          ),
+          SizedBox(height: 6),
+          buildGemColumn(state, controller, state.cooldownGemMap),
+        ],
+      ),
     );
   }
 
@@ -69,7 +77,9 @@ class _GemTabViewState extends ConsumerState<GemTabView> {
                       children: [
                         Text(
                           controller.extractText(gem.name),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: AppTextStyle.titleSmallBoldStyle.copyWith(
+                            color: Colors.white,
+                          ),
                         ),
                         Row(
                           children: [
@@ -78,7 +88,12 @@ class _GemTabViewState extends ConsumerState<GemTabView> {
                               backgroundImage: NetworkImage(skill.icon),
                             ),
                             SizedBox(width: 4),
-                            Text(skill.name),
+                            Text(
+                              skill.name,
+                              style: AppTextStyle.labelXSmallStyle.copyWith(
+                                color: Colors.white,
+                              ),
+                            ),
                           ],
                         ),
                       ],

@@ -1,3 +1,4 @@
+import 'package:cjylostark/constants/app_text_style.dart';
 import 'package:cjylostark/feature/armories/presentation/profile_controller.dart';
 import 'package:cjylostark/feature/armories/presentation/profile_state.dart';
 import 'package:flutter/material.dart';
@@ -17,13 +18,13 @@ class _EngravingsTabViewState extends ConsumerState<EngravingsTabView> {
     final state = ref.watch(profileControllerProvider);
     return Column(
       children: [
-        Text('각인'),
         state.engravings == null || state.engravings!.arkPassiveEffects.isEmpty
             ? Container()
             : Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
+                    SizedBox(height: 14),
                     buildEngravingWidget(state, controller, 0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -54,19 +55,25 @@ class _EngravingsTabViewState extends ConsumerState<EngravingsTabView> {
   ) {
     return Builder(
       builder: (context) {
-        if(state.engravings!.arkPassiveEffects.length == effectsIndex){
+        if (state.engravings!.arkPassiveEffects.length == effectsIndex) {
           return Column(
             children: [
               Text('장착 X'),
               CircleAvatar(radius: 40),
               Container(height: 20),
-              SizedBox(width: 16, height: 16)
+              SizedBox(width: 16, height: 16),
             ],
           );
         }
         return Column(
           children: [
-            Text(state.engravings!.arkPassiveEffects[effectsIndex].name),
+            Text(
+              state.engravings!.arkPassiveEffects[effectsIndex].name,
+              style: AppTextStyle.titleMediumBoldStyle.copyWith(
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 4),
             CircleAvatar(
               radius: 40,
               backgroundImage: AssetImage(
@@ -90,11 +97,15 @@ class _EngravingsTabViewState extends ConsumerState<EngravingsTabView> {
                                     .engravings!
                                     .arkPassiveEffects[effectsIndex]
                                     .level
-                            ? state.engravings!.arkPassiveEffects[i].grade == '유물'
+                            ? state.engravings!.arkPassiveEffects[i].grade ==
+                                      '유물'
                                   ? AssetImage(
                                       'assets/images/engraving_grade_3.png',
                                     )
-                                  : state.engravings!.arkPassiveEffects[i].grade ==
+                                  : state
+                                            .engravings!
+                                            .arkPassiveEffects[i]
+                                            .grade ==
                                         '전설'
                                   ? AssetImage(
                                       'assets/images/engraving_grade_2.png',
@@ -102,13 +113,18 @@ class _EngravingsTabViewState extends ConsumerState<EngravingsTabView> {
                                   : AssetImage(
                                       'assets/images/engraving_grade_1.png',
                                     )
-                            : AssetImage('assets/images/engraving_level_off.png'),
+                            : AssetImage(
+                                'assets/images/engraving_level_off.png',
+                              ),
                       ),
                     ),
                   ),
               ],
             ),
-            state.engravings!.arkPassiveEffects[effectsIndex].abilityStoneLevel ==
+            state
+                        .engravings!
+                        .arkPassiveEffects[effectsIndex]
+                        .abilityStoneLevel ==
                     null
                 ? SizedBox(width: 16, height: 16)
                 : Row(
@@ -119,19 +135,24 @@ class _EngravingsTabViewState extends ConsumerState<EngravingsTabView> {
                         height: 16,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: AssetImage('assets/images/engrave_stone.png'),
+                            image: AssetImage(
+                              'assets/images/engrave_stone.png',
+                            ),
                             fit: BoxFit.cover,
                           ),
                         ),
                       ),
                       Text(
                         'LV ${state.engravings!.arkPassiveEffects[effectsIndex].abilityStoneLevel}',
+                        style: AppTextStyle.labelMediumStyle.copyWith(
+                          color: Colors.white,
+                        ),
                       ),
                     ],
                   ),
           ],
         );
-      }
+      },
     );
   }
 }
