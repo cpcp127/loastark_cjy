@@ -15,6 +15,7 @@ import 'package:cjylostark/feature/armories/presentation/profile_controller.dart
 import 'package:cjylostark/feature/armories/presentation/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:getwidget/components/search_bar/gf_search_bar.dart';
 import 'package:html/parser.dart' as html_parser; // html 파서 사용
 
 class ProfileView extends ConsumerStatefulWidget {
@@ -84,6 +85,7 @@ class _ProfileView extends ConsumerState<ProfileView> {
               },
             ),
           ),
+
           SizedBox(height: 24),
           Text(
             "최근 검색 닉네임",
@@ -98,7 +100,9 @@ class _ProfileView extends ConsumerState<ProfileView> {
                   state.recentSearchNickname!.isEmpty) {
                 return Container();
               } else {
-                return Column(
+                return Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
                   children: [
                     for (int i = 0; i < state.recentSearchNickname!.length; i++)
                       buildRecentContainer(i),
@@ -127,7 +131,7 @@ class _ProfileView extends ConsumerState<ProfileView> {
             borderRadius: BorderRadius.circular(16),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Text(
               state.recentSearchNickname![i],
               style: AppTextStyle.bodyMediumStyle.copyWith(
@@ -150,9 +154,9 @@ class _ProfileView extends ConsumerState<ProfileView> {
       child: Scaffold(
         backgroundColor: AppColors.backGround,
         appBar: AppBar(
-          backgroundColor:AppColors.backGround,
+          backgroundColor: AppColors.backGround,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back,color: Colors.white,),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
 
             onPressed: () {
               controller.tabBackButton();

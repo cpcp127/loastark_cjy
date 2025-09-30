@@ -6,12 +6,14 @@ class CustomSearchTextField extends StatefulWidget {
   final VoidCallback? onSearch; // 검색 성공 시 실행
   final TextEditingController? controller;
   final String? hintText;
+  final FocusNode? focusNode;
 
   const CustomSearchTextField({
     super.key,
     this.onSearch,
     this.controller,
     this.hintText,
+    this.focusNode,
   });
 
   @override
@@ -26,6 +28,7 @@ class _CustomSearchTextFieldState extends State<CustomSearchTextField> {
     return Form(
       key: _formKey,
       child: TextFormField(
+        focusNode: widget.focusNode,
         controller: widget.controller,
         validator: (value) {
           if (value == null || value.trim().isEmpty) {
@@ -55,7 +58,7 @@ class _CustomSearchTextFieldState extends State<CustomSearchTextField> {
             ),
           ),
           suffixIcon: IconButton(
-            icon:  Icon(Icons.search, color: AppColors.sky900),
+            icon: Icon(Icons.search, color: AppColors.sky900),
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 widget.onSearch?.call();
