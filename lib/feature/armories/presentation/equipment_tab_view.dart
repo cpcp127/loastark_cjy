@@ -83,25 +83,16 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                children: [
-                                  Text(
+                              Text(
+                                state.weapon!.name,
+                                style: AppTextStyle.labelMediumStyle
+                                    .copyWith(
+                                  color: controller.getGradeColor(
                                     state.weapon!.grade,
-                                    style: AppTextStyle.labelMediumStyle
-                                        .copyWith(
-                                          color: controller.getGradeColor(
-                                            state.weapon!.grade,
-                                          ),
-                                        ),
                                   ),
-                                  SizedBox(width: 3),
-                                  Text(
-                                    extractEnhanceLevel(state.weapon!.name),
-                                    style: AppTextStyle.labelMediumStyle
-                                        .copyWith(color: Colors.white),
-                                  ),
-                                ],
+                                ),
                               ),
+
                               //상급재련
                               state.weapon!.tooltip!.element005!.value
                                       .toString()
@@ -112,67 +103,7 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
                                           .copyWith(color: Colors.white),
                                     )
                                   : Container(),
-                              //초월
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 14,
-                                    height: 14,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                          'assets/images/ico_tooltip_transcendence.png',
-                                        ),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  (state
-                                                  .weapon!
-                                                  .tooltip!
-                                                  .element009
-                                                  ?.value?['Element_000']?['topStr'] !=
-                                              null &&
-                                          !state
-                                              .weapon!
-                                              .tooltip!
-                                              .element009!
-                                              .value['Element_000']['topStr']
-                                              .toString()
-                                              .contains("에스더"))
-                                      ? Text(
-                                          controller.transcendence(
-                                                state
-                                                    .weapon!
-                                                    .tooltip!
-                                                    .element009!
-                                                    .value['Element_000']['topStr'],
-                                              ) ??
-                                              "",
-                                          style: AppTextStyle.labelMediumStyle
-                                              .copyWith(color: Colors.white),
-                                        )
-                                      : (state
-                                                .weapon!
-                                                .tooltip!
-                                                .element010
-                                                ?.value?['Element_000']?['topStr'] !=
-                                            null)
-                                      ? Text(
-                                          controller.transcendence(
-                                                state
-                                                    .weapon!
-                                                    .tooltip!
-                                                    .element010!
-                                                    .value['Element_000']['topStr'],
-                                              ) ??
-                                              "",
-                                          style: AppTextStyle.labelMediumStyle
-                                              .copyWith(color: Colors.white),
-                                        )
-                                      : Container(),
-                                ],
-                              ),
+
                             ],
                           ),
                         ],
@@ -272,6 +203,7 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
               ),
               SizedBox(width: 8),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   for (int i = 0; i < 3; i++)
                     TooltipText(
@@ -333,23 +265,14 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        item.grade,
-                        style: AppTextStyle.labelMediumStyle.copyWith(
-                          color: controller.getGradeColor(item.grade),
-                        ),
-                      ),
-                      SizedBox(width: 3),
-                      Text(
-                        extractEnhanceLevel(item.name),
-                        style: AppTextStyle.labelMediumStyle.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    item.name,
+                    style: AppTextStyle.labelMediumStyle.copyWith(
+                      color: controller.getGradeColor(item.grade),
+                    ),
                   ),
+
+
                   //상급재련
                   item.tooltip!.element005!.value.toString().contains('상급 재련')
                       ? Text(
@@ -359,66 +282,11 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
                           ),
                         )
                       : Container(),
-                  //초월
-                  Row(
-                    children: [
-                      Container(
-                        width: 14,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(
-                              'assets/images/ico_tooltip_transcendence.png',
-                            ),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      // element009 먼저 확인
-                      item.tooltip?.element009?.value?['Element_000']?['topStr']
-                                  ?.toString()
-                                  .contains('초월') ==
-                              true
-                          ? Text(
-                              controller.transcendence(
-                                    item
-                                        .tooltip!
-                                        .element009!
-                                        .value['Element_000']['topStr'],
-                                  ) ??
-                                  "",
-                              style: AppTextStyle.labelMediumStyle.copyWith(
-                                color: Colors.white,
-                              ),
-                            )
-                          // 없으면 element010 확인
-                          : item
-                                    .tooltip
-                                    ?.element010
-                                    ?.value?['Element_000']?['topStr']
-                                    ?.toString()
-                                    .contains('초월') ==
-                                true
-                          ? Text(
-                              controller.transcendence(
-                                    item
-                                        .tooltip!
-                                        .element010!
-                                        .value['Element_000']['topStr'],
-                                  ) ??
-                                  "",
-                              style: AppTextStyle.labelMediumStyle.copyWith(
-                                color: Colors.white,
-                              ),
-                            )
-                          : Container(),
-                    ],
-                  ),
+
                 ],
               ),
               SizedBox(width: 10),
-              //엘릭서
-              buildElixir(item),
+
             ],
           ),
         ),
@@ -426,52 +294,6 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
     );
   }
 
-  Widget buildElixir(CharacterEquipment item) {
-    final controller = ref.read(profileControllerProvider.notifier);
-    final element010Value = item.tooltip?.element010?.value;
-    final element011Value = item.tooltip?.element011?.value;
-
-    dynamic elixirSource;
-
-    if (element010Value != null && element010Value.toString().contains('엘릭서')) {
-      elixirSource = element010Value;
-    } else if (element011Value != null &&
-        element011Value.toString().contains('엘릭서')) {
-      elixirSource = element011Value;
-    }
-
-    if (elixirSource == null) {
-      return Container(); // 둘 다 없으면 빈 위젯
-    }
-
-    final elixirElements = elixirSource as Map<String, dynamic>;
-    final elixirItemElements =
-        elixirSource['Element_000']['contentStr'] as Map<String, dynamic>?;
-
-    if (elixirElements.isEmpty || elixirItemElements == null) {
-      return Container();
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        elixirItemElements.isNotEmpty
-            ? TooltipText(
-                controller.elixir(
-                  elixirItemElements['Element_000']['contentStr'],
-                ),
-              )
-            : Container(),
-        elixirItemElements.length >= 2
-            ? TooltipText(
-                controller.elixir(
-                  elixirItemElements['Element_001']['contentStr'],
-                ),
-              )
-            : Container(),
-      ],
-    );
-  }
 
   Widget buildAccessories(
     ProfileState state,
@@ -516,15 +338,16 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TooltipText(item.tooltip!.element006!.value['Element_001']),
+                    Text(
+                      '힘/민/지 ${controller.getAccessoriesPercent(item.type, controller.extractStrengthValue(item.tooltip!.element004!.value.toString()))} ',
+                      style: AppTextStyle.labelMediumStyle.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
-              Text(
-                '힘/민/지 ${controller.getAccessoriesPercent(item.type, controller.extractStrengthValue(item.tooltip!.element004!.value.toString()))} ',
-                style: AppTextStyle.labelMediumStyle.copyWith(
-                  color: Colors.white,
-                ),
-              ),
+
             ],
           ),
         ),
