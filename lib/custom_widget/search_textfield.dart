@@ -30,6 +30,7 @@ class _CustomSearchTextFieldState extends State<CustomSearchTextField> {
       child: TextFormField(
         focusNode: widget.focusNode,
         controller: widget.controller,
+        style: AppTextStyle.bodyMediumStyle.copyWith(color: AppColors.white),
         validator: (value) {
           if (value == null || value.trim().isEmpty) {
             return '빈값이에요!';
