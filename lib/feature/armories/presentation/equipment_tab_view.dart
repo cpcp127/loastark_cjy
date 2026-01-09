@@ -85,8 +85,7 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
                             children: [
                               Text(
                                 state.weapon!.name,
-                                style: AppTextStyle.labelMediumStyle
-                                    .copyWith(
+                                style: AppTextStyle.labelMediumStyle.copyWith(
                                   color: controller.getGradeColor(
                                     state.weapon!.grade,
                                   ),
@@ -103,7 +102,6 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
                                           .copyWith(color: Colors.white),
                                     )
                                   : Container(),
-
                             ],
                           ),
                         ],
@@ -272,7 +270,6 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
                     ),
                   ),
 
-
                   //상급재련
                   item.tooltip!.element005!.value.toString().contains('상급 재련')
                       ? Text(
@@ -282,18 +279,15 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
                           ),
                         )
                       : Container(),
-
                 ],
               ),
               SizedBox(width: 10),
-
             ],
           ),
         ),
       ),
     );
   }
-
 
   Widget buildAccessories(
     ProfileState state,
@@ -347,7 +341,6 @@ class _EquipmentTabViewState extends ConsumerState<EquipmentTabView> {
                   ],
                 ),
               ),
-
             ],
           ),
         ),
