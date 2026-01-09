@@ -91,7 +91,7 @@ class GemSkill {
   final String icon;
 
   @JsonKey(name: 'Tooltip')
-  final String? tooltip;
+  final String tooltip;
 
   GemSkill({
     required this.gemSlot,
@@ -99,7 +99,7 @@ class GemSkill {
     required this.description,
     required this.option,
     required this.icon,
-     this.tooltip,
+    required this.tooltip,
   });
 
   factory GemSkill.fromJson(Map<String, dynamic> json) =>

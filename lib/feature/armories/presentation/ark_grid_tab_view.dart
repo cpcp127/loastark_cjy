@@ -27,7 +27,18 @@ class _ArkGridTabViewState extends ConsumerState<ArkGridTabView> {
               ? Container()
               : Column(
                   children: [
-
+                    for (int i = 0; i < state.arkGrid!.effects.length; i++)
+                      Row(
+                        children: [
+                          Text(
+                            '${state.arkGrid!.effects[i].name} : LV ${state.arkGrid!.effects[i].level}',
+                            style: AppTextStyle.labelMediumStyle.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    SizedBox(height: 14),
                     for (int i = 0; i < state.arkGrid!.slots.length; i++)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,20 +72,34 @@ class _ArkGridTabViewState extends ConsumerState<ArkGridTabView> {
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    for (int i = 0; i < state.arkGrid!.effects.length; i++)
-                      Row(
-                        children: [
-                          Text(
-                            '${state.arkGrid!.effects[i].name} : LV ${state.arkGrid!.effects[i].level}',
-                            style: AppTextStyle.labelMediumStyle.copyWith(
-                              color: Colors.white,
+                          //코어 타입
+                          buildCoreType(controller, state, i),
+
+                          //코어 옵션
+                          buildCoreOption(state, i),
+
+                          SizedBox(height: 10),
+                          //코어 장착 쩸
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                for (
+                                  int l = 0;
+                                  l < state.arkGrid!.slots[i].gems.length;
+                                  l++
+                                )
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: buildGem(state, i, l, controller),
+                                  ),
+                              ],
                             ),
                           ),
+                          SizedBox(height: 14),
                         ],
                       ),
-                    SizedBox(height: 14),
+
                   ],
                 ),
         ],
@@ -108,28 +133,28 @@ class _ArkGridTabViewState extends ConsumerState<ArkGridTabView> {
                 ),
               ),
 
-              // Text(
-              //   controller.extractText(
-              //     state.arkGrid!.slots[i].gems[l].tooltip!.element000!.value
-              //         .toString(),
-              //   ),
-              //   style: AppTextStyle.labelSmallStyle.copyWith(
-              //     color: Colors.white,
-              //   ),
-              // ),
+              Text(
+                controller.extractText(
+                  state.arkGrid!.slots[i].gems[l].tooltip!.element000!.value
+                      .toString(),
+                ),
+                style: AppTextStyle.labelSmallStyle.copyWith(
+                  color: Colors.white,
+                ),
+              ),
             ],
           ),
+          TooltipText(
+            state
+                .arkGrid!
+                .slots[i]
+                .gems[l]
+                .tooltip!
+                .element006!
+                .value!['Element_001']
+                .toString(),
+          ),
 
-          // TooltipText(
-          //   state
-          //       .arkGrid!
-          //       .slots[i]
-          //       .gems[l]
-          //       .tooltip!
-          //       .element006!
-          //       .value!['Element_001']
-          //       .toString(),
-          // ),
         ],
       ),
     );

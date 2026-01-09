@@ -53,7 +53,7 @@ GemSkill _$GemSkillFromJson(Map<String, dynamic> json) => GemSkill(
       .toList(),
   option: json['Option'] as String,
   icon: json['Icon'] as String,
-  tooltip: json['Tooltip'] as String?,
+  tooltip: json['Tooltip'] as String,
 );
 
 Map<String, dynamic> _$GemSkillToJson(GemSkill instance) => <String, dynamic>{

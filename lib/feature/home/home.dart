@@ -5,7 +5,6 @@ import 'package:cjylostark/feature/armories/data/armories_repository.dart';
 import 'package:cjylostark/feature/armories/presentation/profile_view.dart';
 import 'package:cjylostark/feature/stone/stone_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomeView extends ConsumerStatefulWidget {
@@ -21,18 +20,16 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarColor: AppColors.backGround, // 상태바 배경색 (유지)
-        statusBarIconBrightness: Brightness.light, // ✅ Android 아이콘 흰색
-        statusBarBrightness: Brightness.dark, // ✅ iOS 아이콘 흰색
-      ),
-      child: Scaffold(
-        backgroundColor: AppColors.backGround,
-        bottomNavigationBar: buildBottomNavigationBar(),
-        body: IndexedStack(
-          index: bottomIndex,
-          children: [ProfileView(), StoneView(), Container()],
+    return Container(
+      color: AppColors.backGround,
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: AppColors.backGround,
+          bottomNavigationBar: buildBottomNavigationBar(),
+          body: IndexedStack(
+            index: bottomIndex,
+            children: [ProfileView(), StoneView(), Container()],
+          ),
         ),
       ),
     );

@@ -1,3 +1,4 @@
+import 'dart:ui';
 
 import 'package:cjylostark/feature/armories/data/armories_repository.dart';
 import 'package:cjylostark/feature/armories/domain/character_equipment.dart';
@@ -379,12 +380,6 @@ class ProfileController extends StateNotifier<ProfileState> {
         nodeName = '야성';
       } else if (state.arkPassive!.effects[i].description.contains('환수 각성')) {
         nodeName = '환수 각성';
-      }
-      else if (state.arkPassive!.effects[i].description.contains('드레드 로어')) {
-        nodeName = '드레드 로어';
-      }
-      else if (state.arkPassive!.effects[i].description.contains('업화의 계승자')) {
-        nodeName = '업화의 계승자';
       }
     }
     return nodeName;
